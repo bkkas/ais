@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "ais_naval"
+version = "0.0.1"
+authors = [
+	{ name = "Sondre" },
+	{ name = "Tord" },
+	{ name = "Sara" },
+	{ name = "Kevin" },
+]
+description = "A small package to search and navigate downloaded AIS data"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+	"Programming Language :: Python :: 3",
+	"Development Status :: 1 - Planning", 
+	"Environment :: Console", 
+	"Operating System :: OS Independent",
+	"License :: OSI Approved :: GNU Lesser General Public License v3 (LPGLv3)",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/bkkas/ais"
+"Bug Tracker" = "https://github.com/bkkas/ais/issues"
