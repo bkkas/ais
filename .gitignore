@@ -1,0 +1,14 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Python distribution files for PyPI
+dist/
+
+
+# Git files
+.git/
+
+# Editor files
+.idea
