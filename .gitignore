@@ -7,6 +7,8 @@ __pycache__/
 # that may be built when calling build
 *.egg
 *.egg/
+*.egg-info
+*.egg-info/
 
 # Python distribution files for PyPI
 dist/
