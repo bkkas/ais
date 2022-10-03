@@ -28,12 +28,28 @@ class TestClass:
     def test_another(self):
         assert True
 
+    # Can write custom error messages by simply adding a comma at the end
+    # At the same time, a test can be skipped by giving it @pytest.mark.skip
+    # A reason is not required, but should be provided
+    @pytest.mark.skip(reason="For demonstration purposes")
+    def test_message(self):
+        assert 1 == 2, "1 should be equal to 2 but is not"
+
+    # Can also skip conditional tests by giving them skipif
+    # Can be useful if version number of something does not have a feature yet
+    # or if the operating system has differences between them in the way they treat a functionality
+    @pytest.mark.skipif(4 > 3, reason="4 is larger than 3")
+    def test_skipif(self):
+        assert 1 == 2
+
 
 def some_function(x: int) -> int:
     return x + 2
 
+
 def divide_by_zero(x: float) -> float:
     return x / 0
+
 
 class TestClass2:
     # One way to define fixtures
