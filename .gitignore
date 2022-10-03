@@ -13,6 +13,8 @@ __pycache__/
 # Python distribution files for PyPI
 dist/
 
+# Python testfiles
+*.pytest_cache/
 
 # Git files
 .git/
