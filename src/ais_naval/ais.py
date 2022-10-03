@@ -1,6 +1,8 @@
 import argparse
 import csv
 
+import pandas as pd
+
 # Create the parser
 my_parser = argparse.ArgumentParser(prog='ais',
                                     description='AIS analyzer application')
@@ -15,8 +17,8 @@ my_parser.add_argument('Path',
 my_parser.add_argument('Command',
                        metavar='<COMMAND>',
                        action='store',
-                       choices={'statistics', 'print'},
                        type=str,
+                       choices={'statistics', 'print'},
                        help='a command to call on the input data')
 
 my_parser.add_argument('--full',
@@ -37,6 +39,15 @@ command = args.Command
 full = args.full
 output_path = args.output
 
+
+def is_valid_filename(filename):
+    return filename[-4:] == '.csv'
+
+
+# Loading input
+
+data_df = pd.read_csv(input_path, sep=';')
+
 with open(input_path, 'r') as csv_file:
     reader = csv.reader(csv_file)
 
@@ -52,11 +63,19 @@ with open(input_path, 'r') as csv_file:
 
     csv_file.close()
 
-if (output_path != '') and (output_path[-4:] == '.csv'):
-    out = ["Wow", "it", "works", "eviny"]
 
 
+# Output
+# Validating output file name
+if is_valid_filename(output_path):
 
-    with open('output.csv', 'w') as file:
+    # writing some arbitrary list to the csv
+    with open(output_path, 'w') as file:
+        out = ["Wow", "it", "works", "eviny"]
         writer = csv.writer(file)
         writer.writerow(out)
+
+    # Testing output with pandas
+    # Storing input as a dataframe
+    stats = data_df.describe()
+    stats.to_csv(output_path)
