@@ -3,6 +3,11 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Deprecated python packaging method
+# that may be built when calling build
+*.egg
+*.egg/
+
 # Python distribution files for PyPI
 dist/
 
