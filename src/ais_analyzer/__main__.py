@@ -6,7 +6,7 @@ from commands import statistics
 
 def __main__():
     """
-    Our application has three rough steps:
+    The application has three rough steps:
     1. Take arguments from the user via command line
     2. Load the data from the path specified in the CLI
     3. Apply the command specified in the CLI
@@ -22,7 +22,7 @@ def __main__():
     # 2. Loading the data using input handler
     my_data = InputHandler().read_from_csv(args['path'])
 
-    # 3. Calling the command on my data
+    # 3. Calling the command on the data
     # TODO: Proper input validation
     commands = {'statistics': statistics}
 
