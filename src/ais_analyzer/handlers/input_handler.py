@@ -12,5 +12,12 @@ class InputHandler:
         :return: a dataframe object
         """
 
+
+        # TODO's:
+        #  support for danish and norwegian datasets,
+        #  colreduce,
+        #  downsampling,
+        #  downcasting
+
         df = pd.read_csv(path, sep)
         return df
