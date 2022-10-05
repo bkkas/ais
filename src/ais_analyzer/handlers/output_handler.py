@@ -3,12 +3,13 @@ import pandas as pd
 
 class OutputHandler:
 
-    def __init__(self):
+    def __init__(self, path=None):
+        self.path = path
 
-        self.to_csv()
 
-    def to_csv(self, path, dataframe, sep=","):
+    def output_csv(self, dataframe, sep=","):
         """
+        :param dataframe: the input dataframe to convert to csv
         :param sep: the seperator
 
         """

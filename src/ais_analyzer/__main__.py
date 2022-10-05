@@ -1,8 +1,8 @@
 
-from src.ais_analyzer.handlers.output_handler import OutputHandler
-from src.ais_analyzer.handlers.input_handler import InputHandler
-from src.ais_analyzer.handlers.cli_handler import MyAISCLI
-from src.ais_analyzer.commands import statistics
+from handlers.output_handler import OutputHandler
+from handlers.input_handler import InputHandler
+from handlers.cli_handler import MyAISCLI
+from commands import statistics
 
 
 def __main__():
@@ -21,20 +21,23 @@ def __main__():
     args = mycli.get_args(asdict=True)
 
     # 2. Loading the data using input handler
-    my_data = InputHandler(args['path'])
+    my_data = InputHandler().read_from_csv(args['path'])
 
     # 3. Calling the command on my data
     # TODODO: Proper input validation
     commands = {'statistics': statistics}
-    command = args['commmand']
-    params = args['full']
-    if command in commands.keys():
+
+    if args['command'] in commands.keys():
         # Statistics is the only command, so we call the statistics method on the data
-        transformed_data = commands[command](my_data, params)
+        # transformed_data = commands[command](my_data, args)
+        transformed_data = statistics.statistics(my_data, args)
+    else:
+        # TODODO proper exception handling
+        transformed_data = my_data
 
     # 4. Output the transformed data
     output_path = args['output']
-    OutputHandler(output_path, transformed_data)
+    OutputHandler(output_path).output_csv(transformed_data)
 
 
 if __name__ == "__main__":
