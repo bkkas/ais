@@ -1,5 +1,7 @@
 import pandas as pd
 
+from commands import statistics
+
 
 class MyAISHandler:
 
@@ -16,9 +18,11 @@ class MyAISHandler:
 
         # Input from cli
         input_path = args['path']
-        output_path = args['output']
         command = args['command']
         param = args['full']
+        output_path = args['output']
+
+        
 
         # Only support for norwegian AIS data per now
         self.read_csv(input_path, sep=';')
