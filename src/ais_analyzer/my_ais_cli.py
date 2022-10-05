@@ -11,13 +11,13 @@ class MyAISCLI:
                                             description='AIS analyzer application')
 
         # Add the positional arguments
-        my_parser.add_argument('Path',
+        my_parser.add_argument('path',
                                metavar='<PATH>',
                                action='store',
                                type=str,
                                help='the path to the input ais csv file(s)')
 
-        my_parser.add_argument('Command',
+        my_parser.add_argument('command',
                                metavar='<COMMAND>',
                                action='store',
                                type=str,
