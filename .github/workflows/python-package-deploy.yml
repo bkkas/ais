@@ -10,7 +10,7 @@ name: Upload Python Package
 
 on:
 
-  # Workflow triggers when the tests are successful and pushed on main
+  # Workflow triggers when the tests are successful, pushed on main and if commit is tagged
   workflow_run:
     workflows: [Python Package Test]
     types: [completed]
@@ -22,8 +22,9 @@ permissions:
 jobs:
   deploy:
 
-    # Only run job is the Python Package Test workflow was successful
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    # Only run job is the Python Package Test workflow was successful and the commit is tagged with version
+    if: ${{ github.event.workflow_run.conclusion == 'success' }} && ${{ startsWith(github.ref, 'refs/tags/v*') }}
+
 
     runs-on: ubuntu-latest
 
@@ -57,7 +58,7 @@ jobs:
         verbose: true
 
 
-  deploy-on-failure:
+  deploy-on-test-failure:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'failure' }}
     steps:
