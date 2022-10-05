@@ -2,4 +2,4 @@
 
 class TestCase:
     def test_something(self):
-        assert True
+        assert True  # add assertion here
