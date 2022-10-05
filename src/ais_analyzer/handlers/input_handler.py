@@ -19,5 +19,5 @@ class InputHandler:
         #  downsampling,
         #  downcasting
 
-        df = pd.read_csv(path, sep)
+        df = pd.read_csv(path, sep=sep)
         return df
