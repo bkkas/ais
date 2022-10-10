@@ -1,5 +1,5 @@
 import pandas as pd
-import values
+from values import get_no_cols, get_dk_cols
 
 
 def check_csv_sep(path, sep) -> str:
@@ -12,11 +12,19 @@ def check_csv_sep(path, sep) -> str:
     return sep
 
 
+def get_needed_cols(sep) -> list:
+
+    if sep == ';':
+        return get_no_cols()
+    if sep == ',':
+        return get_dk_cols()
+
+
 class InputHandler:
 
     def __init__(self, path=None, value=None):
         self.path = path
-        self.value = values()
+        # self.value = values()
 
     def read_from_csv(self, path, sep=",") -> pd.DataFrame:
         """
@@ -31,14 +39,7 @@ class InputHandler:
         #  downsampling,
         #  downcasting
         sep = check_csv_sep(path, sep)
-        columns = self.get_needed_cols(sep)
+        columns = get_needed_cols(sep)
 
         df = pd.read_csv(path, sep=sep, usecols=columns)
         return df
-
-    def get_needed_cols(self, sep) -> list:
-
-        if sep == ';':
-            return self.value.get_no_cols()
-        if sep == ',':
-            return self.value.get_dk_cols()
