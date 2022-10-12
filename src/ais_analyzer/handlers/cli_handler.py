@@ -11,8 +11,7 @@ class AISCLI:
                                              description='AIS analyzer application')
 
         # Add the positional arguments
-        ais_parser.add_argument('path',
-                                metavar='<PATH>',
+        ais_parser.add_argument('--input-file',
                                 action='store',
                                 type=str,
                                 help='the path to the input ais csv file(s)')
@@ -21,7 +20,7 @@ class AISCLI:
                                 metavar='<COMMAND>',
                                 action='store',
                                 type=str,
-                                choices={'statistics', 'print'},
+                                choices={'statistics', 'portcalls'},
                                 help='a command to call on the input data')
 
         ais_parser.add_argument('--full',
@@ -29,10 +28,25 @@ class AISCLI:
                                 default=True,
                                 help='enables the full statistic output')
 
-        ais_parser.add_argument('--output',
+        ais_parser.add_argument('--lat',
+                                action='store',
+                                default=None,
+                                help='latitude in degrees, use decimal degrees not minutes & seconds')
+
+        ais_parser.add_argument('--long',
+                                action='store',
+                                default=None,
+                                help='longitude in degrees, use decimal degrees not minutes & seconds')
+
+        ais_parser.add_argument('--radius',
+                                action='store',
+                                default=None,
+                                help='radius from latlong point in kilometers')
+
+        ais_parser.add_argument('--output-file',
                                 action='store',
                                 type=str,
-                                help='output and name result of command as csv')
+                                help='output path and name of output csv')
 
         # Execute the parse_args() method
         self.args = ais_parser.parse_args()
