@@ -2,6 +2,11 @@ import argparse
 
 
 class AISCLI:
+    """CLI input reader class for the AIS analyzer application
+
+    <docs here>
+
+    """
 
     def __init__(self, args=None):
         self.args = args
