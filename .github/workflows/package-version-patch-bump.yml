@@ -1,23 +1,23 @@
 name: Bump Package Version
 
-on:
+#on:
   #workflow_run:
   #  workflows: [Upload Python Package]
   #  types: [completed]
   #  branches: ["main"]
-  push:
-    branches:
-      - unittest-branch
+  #push:
+  #  branches:
+  #    - unittest-branch
 
 #permissions:
 #  contents: [read, write]
 
 
-jobs:
-  run:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Execute bump script
-      run: |
-        .github/bump.sh
+#jobs:
+#  run:
+#    runs-on: ubuntu-latest
+#    steps:
+#    - uses: actions/checkout@v3
+#    - name: Execute bump script
+#      run: |
+#        .github/bump.sh
