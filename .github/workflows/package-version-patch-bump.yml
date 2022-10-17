@@ -20,4 +20,4 @@ jobs:
     - uses: actions/checkout@v3
     - name: Execute bump script
       run: |
-        sh .github/bump.sh
+        .github/bump.sh

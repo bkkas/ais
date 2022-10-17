@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Get current version
 PREV_VER="$(<version.txt)"
