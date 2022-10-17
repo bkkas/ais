@@ -1,8 +1,11 @@
 def get_no_cols() -> list:
-    return ['mmsi', 'date_time_utc', 'nav_status', 'lat', 'lon', 'sog', 'length']
+    return ['date_time_utc', 'mmsi', 'nav_status', 'lat', 'lon', 'sog', 'length']
 
 
 def get_dk_cols() -> list:
-    return ['MMSI', '# Timestamp', 'Navigational status', 'Latitude', 'Longitude', 'SOG', 'Length']
+    return ['# Timestamp', 'MMSI', 'Navigational status', 'Latitude', 'Longitude', 'SOG', 'Length']
 
 
+def get_no_dtypes() -> dict:
+    dt = ['int32', 'int8', 'float32', 'float32', 'float16', 'float16']
+    return dict(zip(get_no_cols()[1:], dt))
