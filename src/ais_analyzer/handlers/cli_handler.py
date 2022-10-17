@@ -9,7 +9,6 @@ class AISCLI:
     """
 
     def __init__(self, args=None):
-        self.args = args
 
         # Create the parser
         ais_parser = argparse.ArgumentParser(prog='ais',
@@ -53,8 +52,12 @@ class AISCLI:
                                 type=str,
                                 help='output path and name of output csv')
 
-        # Execute the parse_args() method
-        self.args = ais_parser.parse_args()
+        if args:
+            # Args can be sent in as a list from functon call
+            self.args = ais_parser.parse_args(args=args)
+        else:
+            # Execute the parse_args() method to get arguments from command line
+            self.args = ais_parser.parse_args()
 
     def get_args(self, asdict=False):
         """ Return the args either as namespace or as dict """
