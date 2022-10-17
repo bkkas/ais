@@ -21,11 +21,11 @@ class TestCaseNorwegian:
 
     # Test that the full statistics method is equivalent with .describe
     def test_statistics_no(self, read_no):
-        assert st.statistics(read_no, {'full': True}).equals(read_no.describe())
+        assert st.statistics(read_no, {'full': True}).equals(read_no.describe(include="all"))
 
 
 class TestCaseDanish:
 
     # Test that the full statistics method is equivalent with .describe
     def test_something(self, read_dk):
-        assert st.statistics(read_dk, {'full': True}).equals(read_dk.describe())
+        assert st.statistics(read_dk, {'full': True}).equals(read_dk.describe(include="all"))
