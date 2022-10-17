@@ -29,7 +29,7 @@ class AISCLI:
 
         ais_parser.add_argument('--full',
                                 action='store_true',
-                                default=True,
+                                default=False,
                                 help='enables the full statistic output')
 
         ais_parser.add_argument('--lat',
