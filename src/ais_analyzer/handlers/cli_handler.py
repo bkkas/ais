@@ -46,7 +46,8 @@ class AISCLI:
         ais_parser.add_argument('--radius',
                                 action='store',
                                 default=None,
-                                help='radius from latlong point in kilometers')
+                                type=float,
+                                help='radius from latlong point in meters')
 
         ais_parser.add_argument('--output-file',
                                 action='store',

@@ -4,12 +4,6 @@ from handlers.cli_handler import AISCLI
 from commands import statistics, portcalls
 
 
-def validate_user_arguments(user_arguments):
-    """Validation function for user inputs"""
-
-    pass
-
-
 def __main__():
     """
     The application has three steps:
