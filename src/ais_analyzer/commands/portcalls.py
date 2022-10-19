@@ -32,9 +32,22 @@ def vessels_in_radius(df: pd.DataFrame, point: tuple, radius: float) -> pd.DataF
 
     # Get all entries within the square
     df = df[mask]
+    print(f"\n\ndf:{df}\n\n")
 
     # 2.2 If within, calculate if in radius
-    #dist = geopy.distance.distance(pt1, pt2).km
+    def get_point_distance_center(latlon: tuple[float]) -> float:
+        """
+
+        :param latlon:
+        :return distance from center:
+        """
+        print(latlon)
+        _point = geopy.Point(*latlon)
+        # As long as radius is provided in meter
+        # Then this should be meter as well
+        return gpd.distance(center, _point).m
+
+    df = df.loc[df['latlon'].map(get_point_distance_center) <= radius]
 
     # 2. Calculate the distance to the center point
     # 3. Keep row if distance is less than radius
