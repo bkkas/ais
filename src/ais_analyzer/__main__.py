@@ -20,7 +20,7 @@ def __main__():
     user_arguments = cli.get_args(asdict=True)
 
     # 2. Loading the data using input handler
-    input_path = user_arguments['input-file']
+    input_path = user_arguments['input_file']
     input_data = InputHandler().read_from_csv(input_path)
 
     # 3. Calling the command on the data
@@ -29,7 +29,7 @@ def __main__():
     transformed_data = implemented_commands[user_command](input_data, user_arguments)
 
     # 4. Output the transformed data
-    output_path = user_arguments['output-file']
+    output_path = user_arguments['output_file']
     OutputHandler(output_path).output_csv(transformed_data)
 
 
