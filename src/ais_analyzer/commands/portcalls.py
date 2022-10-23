@@ -66,12 +66,12 @@ def portcalls(input_df: pd.DataFrame, args: dict) -> pd.DataFrame:
     <Only supports geo point and radius, will support polygon in future>
 
     """
-    # Ensure arguments
-    # More arguments are easy to add
+    # Input validation
     _required_list = ['lat', 'lon', 'radius']
-    _args_present = [input_df.get(arg) for arg in _required_list]
+    _args_present = [args[arg] for arg in _required_list]
+
     if None in _args_present:
-        _missing = [arg for arg, present in zip(_required_list, _args_present) if present]
+        _missing = [arg for arg, present in zip(_required_list, _args_present) if not present]
         raise KeyError(f"Missing arguments for portcalls: {_missing}")
 
 
