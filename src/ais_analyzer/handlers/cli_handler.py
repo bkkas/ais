@@ -38,7 +38,7 @@ class AISCLI:
                                 default=None,
                                 help='latitude in degrees, use decimal degrees not minutes & seconds')
 
-        ais_parser.add_argument('--long',
+        ais_parser.add_argument('--lon',
                                 action='store',
                                 default=None,
                                 help='longitude in degrees, use decimal degrees not minutes & seconds')
