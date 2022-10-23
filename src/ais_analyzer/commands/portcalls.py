@@ -1,13 +1,14 @@
 import pandas as pd
 import numpy as np
 import geopy
-import geopy.distance
+import geopy.distance as gpd
 
 
 def vessels_in_radius(df: pd.DataFrame, point: tuple, radius: float) -> pd.DataFrame:
 
-    # 1. Create a latlong tuple-like column
-    df['latlon'] = list(zip(df.lat, df.long))
+    # 1. Create a latlon tuple-like column
+    # TODO remove if not useful later
+    df['latlon'] = list(zip(df.lat, df.lon))
 
     # 2.1 Check if within square (cheap).
 
@@ -20,20 +21,33 @@ def vessels_in_radius(df: pd.DataFrame, point: tuple, radius: float) -> pd.DataF
     w_b = geopy.distance.distance(meters=radius).destination(center, bearing=270)
 
     # Boolean masks
-    n_mask = df['latlon'] > w_b[:2]
-    e_mask = df['latlon'] < e_b[:2]
-    s_mask = df['latlon'] < n_b[:2]
-    w_mask = df['latlon'] > s_b[:2]
+    n_mask = df['lat'] < n_b[0]
+    e_mask = df['lon'] < e_b[1]
+    s_mask = df['lat'] > s_b[0]
+    w_mask = df['lon'] > w_b[1]
 
     mask_lat = np.logical_and(n_mask, s_mask)
     mask_lon = np.logical_and(w_mask, e_mask)
     mask = np.logical_and(mask_lat, mask_lon)
 
-    # TODO: the mask does not work, mask returns 0 rows
+    # Get all entries within the square
     df = df[mask]
+    print(f"\n\ndf:{df}\n\n")
 
     # 2.2 If within, calculate if in radius
-    #dist = geopy.distance.distance(pt1, pt2).km
+    def get_point_distance_center(latlon: tuple[float]) -> float:
+        """
+
+        :param latlon:
+        :return distance from center:
+        """
+        print(latlon)
+        _point = geopy.Point(*latlon)
+        # As long as radius is provided in meter
+        # Then this should be meter as well
+        return gpd.distance(center, _point).m
+
+    df = df.loc[df['latlon'].map(get_point_distance_center) <= radius]
 
     # 2. Calculate the distance to the center point
     # 3. Keep row if distance is less than radius
@@ -52,14 +66,20 @@ def portcalls(input_df: pd.DataFrame, args: dict) -> pd.DataFrame:
     <Only supports geo point and radius, will support polygon in future>
 
     """
-
+    # Ensure arguments
+    # More arguments are easy to add
+    _required_list = ['lat', 'lon', 'radius']
+    _args_present = [input_df.get(arg) for arg in _required_list]
+    if None in _args_present:
+        _missing = [arg for arg, present in zip(_required_list, _args_present) if present]
+        raise KeyError(f"Missing arguments for portcalls: {_missing}")
 
 
     # Step 1: Filter on ships that are in the radius
     # - Create inRadius function, apply to df and create boolean mask
     # - Apply mask to the df
 
-    center_coord = (args['lat'], args['long'])
+    center_coord = (args['lat'], args['lon'])
     radius = args['radius']
 
     vessels = vessels_in_radius(input_df, center_coord, radius)
