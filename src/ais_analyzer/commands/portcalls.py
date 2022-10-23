@@ -30,7 +30,7 @@ def vessels_in_radius(df: pd.DataFrame, point: tuple, radius: float) -> pd.DataF
 
     # Get all entries within the square
     df = df[mask]
-    print(f"\n\ndf:{df}\n\n")
+    #print(f"\n\ndf:{df}\n\n")
 
     # 2.2 If within, calculate if in radius
     def get_point_distance_center(latlon: tuple[float]) -> float:
@@ -45,9 +45,6 @@ def vessels_in_radius(df: pd.DataFrame, point: tuple, radius: float) -> pd.DataF
         return gpd.distance(center, _point).m
 
     df = df.loc[df['latlon'].map(get_point_distance_center) <= radius]
-
-
-
 
     return df
 
@@ -79,18 +76,23 @@ def add_arrival_and_departure(df: pd.DataFrame) -> pd.DataFrame:
     vessels = df.copy()
 
     # Group on MMSI
-    mmsi_grouping = vessels.groupby('MMSI')
+    mmsi_grouping = vessels.groupby('mmsi')
 
     # New columns: time of arrival -> the first entry of MMSI grouping, time of departure -> the last entry
-    arrivals = mmsi_grouping.head(1).set_index('mmsi').rename(columns={'date_time_utc': 'arrival_utc'})
-    departures = mmsi_grouping.tail(1).set_index('mmsi').rename(columns={'date_time_utc': 'departure_utc'})
 
+    arrivals = mmsi_grouping.head(1)[['mmsi', 'date_time_utc']].set_index('mmsi').rename(
+        columns={'date_time_utc': 'arrival_utc'})
+    departures = mmsi_grouping.tail(1)[['mmsi', 'date_time_utc']].set_index('mmsi').rename(
+        columns={'date_time_utc': 'departure_utc'})
     arr_dep = arrivals.merge(departures, left_index=True, right_index=True)
 
     cols_to_drop = ['date_time_utc', 'lon', 'lat', 'sog', 'cog', 'true_heading', 'nav_status', 'message_nr', 'latlon']
-    arr_dep.drop(columns=cols_to_drop, inplace=True)
+    vessels_info = mmsi_grouping.head(1).drop(columns=cols_to_drop).set_index('mmsi')
 
-    return arr_dep
+    vessels_info = arr_dep.merge(vessels_info, left_index=True, right_index=True)
+    vessels_info
+
+    return vessels_info
 
 
 def portcalls(input_df: pd.DataFrame, args: dict) -> pd.DataFrame:
