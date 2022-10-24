@@ -23,7 +23,7 @@ def get_needed_dtypes(sep) -> dict:
     if sep == ';':
         return get_no_dtypes()
     if sep == ',':
-        return get_dk_cols()
+        return get_dk_dtypes()
 
 
 def simple_down_sampler(df) -> pd.DataFrame:
@@ -62,10 +62,10 @@ class InputHandler:
         self.sep = sep
         columns = get_needed_cols(sep)
         self.columns = columns
-        dts = get_needed_cols(sep)
+        dts = get_needed_dtypes(sep)
         self.dtypes = dts
 
-        df = pd.read_csv(path, sep=sep, usecols=columns, dtype=dts, parse_dates=columns[0])
+        df = pd.read_csv(path, sep=sep, usecols=columns, dtype=dts, parse_dates=[columns[0]])
         df = simple_down_sampler(df)
         self.df = df
         return df
