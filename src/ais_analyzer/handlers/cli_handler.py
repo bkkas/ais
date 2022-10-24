@@ -37,7 +37,8 @@ class AISCLI:
                                 default=None,
                                 help='latitude in degrees, use decimal degrees not minutes & seconds')
 
-        ais_parser.add_argument('--long',
+
+        ais_parser.add_argument('--lon',
                                 action='store',
                                 default=None,
                                 help='longitude in degrees, use decimal degrees not minutes & seconds')
@@ -45,7 +46,9 @@ class AISCLI:
         ais_parser.add_argument('--radius',
                                 action='store',
                                 default=None,
-                                help='radius from latlong point in kilometers')
+                                type=float,
+                                help='radius from latlong point in meters')
+
 
         ais_parser.add_argument('--output-file',
                                 action='store',
