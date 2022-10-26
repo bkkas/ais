@@ -51,11 +51,12 @@ class InputHandler:
         :return: a dataframe object
         """
 
-        # TODO's:
-        #  support for danish and norwegian datasets,
-        #  colreduce, OK
-        #  downsampling,
-        #  downcasting, OK
+        # TODO:
+        #  standardize column names
+        #  down sampling, make better
+        #       - chunking
+        #       - remove all boat above/below certain values
+
         if not self.sep:
             self.sep = sep
         self.path = path
