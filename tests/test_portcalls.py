@@ -29,8 +29,8 @@ def none_input():
 @pytest.fixture
 def valid_input():
     yield {
-        'lat': 60.3937,
-        'lon': 5.3068,
+        'lat': 42.0,
+        'lon': 42.0,
         'radius': 500
 
     }
@@ -62,7 +62,7 @@ def port42df(valid_args):
 class TestCase:
 
     def test_input_fixtures(self, valid_args):
-        assert valid_args['lat'] == 60.3937
+        assert valid_args['lat'] == 42.0
 
     def test_input_dataframe(self, port42df):
         test_col_names = ['timestamp_utc', 'mmsi', 'lat', 'lon', 'nav_status','sog','imo','callsign','ship_type','cargo_type', 'width', 'length', 'draught','dest']
@@ -77,3 +77,9 @@ class TestCase:
         print(f"exc_info:{exc_info.value}")
         nones = ['lon', 'radius']
         assert str(exc_info.value) == f'"Missing arguments for portcalls: {nones}"'
+
+
+    def test_portcalls(self, port42df, valid_args):
+        portcalled = portcalls.portcalls(port42df, valid_args)
+
+        assert portcalled.shape[0] == 1
