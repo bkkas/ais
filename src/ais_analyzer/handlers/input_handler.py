@@ -9,10 +9,8 @@ class InputHandler:
         self.data = self._read_from_csv()
 
     def _infer_csv_sep(self, path) -> str:
-        print(f"path is {path}")
         reader = pd.read_csv(path, sep=None, iterator=True, engine='python')
         sep = reader._engine.data.dialect.delimiter
-        print(f"path is {path}, sep is {sep}")
         return sep
 
     def _get_needed_cols(self, sep) -> list:

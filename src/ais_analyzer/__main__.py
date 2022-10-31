@@ -18,10 +18,9 @@ def __main__():
     # Instantiating the CLI and getting arguments
     cli = AISCLI()
     user_arguments = cli.get_args(asdict=True)
-
     # 2. Loading the data using input handler
     input_path = user_arguments['input_file']
-    input_data = InputHandler().read_from_csv(input_path)
+    input_data = InputHandler(path=input_path).get_data()
 
     # 3. Calling the command on the data
     implemented_commands = {'statistics': statistics.statistics, 'portcalls': portcalls.portcalls}
