@@ -6,10 +6,8 @@ import datetime as dt
 
 
 def vessels_in_radius(df: pd.DataFrame, point: tuple, radius: float) -> pd.DataFrame:
-    # 1. Create a latlon tuple-like column
-    df['latlon'] = list(zip(df.lat, df.lon))
 
-    # 2.1 Check if within square (cheap).
+    # 1.1 Check if within square (cheap).
 
     # First we get the N/E/S/W bounds of the square
     center = geopy.Point(*point)
@@ -29,8 +27,7 @@ def vessels_in_radius(df: pd.DataFrame, point: tuple, radius: float) -> pd.DataF
     mask = np.logical_and(mask_lat, mask_lon)
 
     # Get all entries within the square
-    df = df[mask]
-    #print(f"\n\ndf:{df}\n\n")
+    df = df.loc[mask]
 
     # 2.2 If within, calculate if in radius
     def get_point_distance_center(latlon: tuple[float]) -> float:
@@ -39,12 +36,15 @@ def vessels_in_radius(df: pd.DataFrame, point: tuple, radius: float) -> pd.DataF
         :return distance from center:
         """
 
-        _point = geopy.Point(*latlon)
+        _point = geopy.Point(latlon)
         # As long as radius is provided in meter
         # Then this should be meter as well
         return gpd.distance(center, _point).m
 
-    df = df.loc[df['latlon'].map(get_point_distance_center) <= radius]
+    # Create a latlon tuple-like series and calculate a bool mask for vessels in radius
+    latlon = pd.Series(zip(df.loc[:, 'lat'], df.loc[:, 'lon']))
+    vessels_in_rad_bool = (latlon.map(get_point_distance_center) <= radius).tolist()
+    df = df.loc[vessels_in_rad_bool]
 
     return df
 
@@ -73,21 +73,26 @@ def remove_transiting_vessels(vessels: pd.DataFrame) -> pd.DataFrame:
 
 def add_arrival_and_departure(df: pd.DataFrame) -> pd.DataFrame:
 
-    vessels = df.copy()
-
     # Group on MMSI
-    mmsi_grouping = vessels.groupby('mmsi')
+    mmsi_grouping = df.groupby('mmsi')
 
-    # New columns: time of arrival -> the first entry of MMSI grouping, time of departure -> the last entry
+    # Arrivals - the first entry of mmsi grouping
+    arrivals = mmsi_grouping.head(1)
 
-    arrivals = mmsi_grouping.head(1)[['mmsi', 'date_time_utc']].set_index('mmsi').rename(
-        columns={'date_time_utc': 'arrival_utc'})
-    departures = mmsi_grouping.tail(1)[['mmsi', 'date_time_utc']].set_index('mmsi').rename(
-        columns={'date_time_utc': 'departure_utc'})
-    arr_dep = arrivals.merge(departures, left_index=True, right_index=True)
+    # Departures - the last entry
+    departures = mmsi_grouping.tail(1)
 
-    cols_to_drop = ['date_time_utc', 'lon', 'lat', 'sog', 'cog', 'true_heading', 'nav_status', 'message_nr', 'latlon']
-    vessels_info = mmsi_grouping.head(1).drop(columns=cols_to_drop).set_index('mmsi')
+    # New columns: time of arrival and departure
+    arrivals_utc = arrivals[['mmsi', 'timestamp_utc']].set_index('mmsi').rename(
+        columns={'timestamp_utc': 'arrival_utc'})
+    departures_utc = departures[['mmsi', 'timestamp_utc']].set_index('mmsi').rename(
+        columns={'timestamp_utc': 'departure_utc'})
+    arr_dep = arrivals_utc.merge(departures_utc, left_index=True, right_index=True)
+
+    # We drop the columns which are not relevant
+    cols_to_drop = ['timestamp_utc', 'lon', 'lat', 'sog', 'cog', 'true_heading', 'nav_status', 'message_nr', 'latlon']
+    drop_in_df = [col for col in arr_dep.columns if col in cols_to_drop]
+    vessels_info = arrivals.drop(columns=drop_in_df).set_index('mmsi')
 
     vessels_info = arr_dep.merge(vessels_info, left_index=True, right_index=True)
     vessels_info
@@ -109,7 +114,7 @@ def portcalls(input_df: pd.DataFrame, args: dict) -> pd.DataFrame:
     radius = args['radius']
     vessels_rad = vessels_in_radius(input_df, center_coord, radius)
 
-    # Step 2: Filter on vessels that are idle at some point - remove vessels that are transiting
+    # Step 2: Filter on vessels that are idle at some point - remove the vessels that are transiting
     # - Threshold on speed? How long should the vessel be below speed threshold to consider "idle"/in port?
     # - Check if geo position stays within a certain area over certain amount of time?
     vessels_idle = remove_transiting_vessels(vessels_rad)
