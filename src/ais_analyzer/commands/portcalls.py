@@ -6,10 +6,8 @@ import datetime as dt
 
 
 def vessels_in_radius(df: pd.DataFrame, point: tuple, radius: float) -> pd.DataFrame:
-    # 1. Create a latlon tuple-like column
-    df['latlon'] = list(zip(df.lat, df.lon))
 
-    # 2.1 Check if within square (cheap).
+    # 1.1 Check if within square (cheap).
 
     # First we get the N/E/S/W bounds of the square
     center = geopy.Point(*point)
@@ -44,6 +42,8 @@ def vessels_in_radius(df: pd.DataFrame, point: tuple, radius: float) -> pd.DataF
         # Then this should be meter as well
         return gpd.distance(center, _point).m
 
+    # Create a latlon tuple-like column
+    df['latlon'] = list(zip(df.lat, df.lon))
     df = df.loc[df['latlon'].map(get_point_distance_center) <= radius]
 
     return df
@@ -79,14 +79,14 @@ def add_arrival_and_departure(df: pd.DataFrame) -> pd.DataFrame:
     mmsi_grouping = vessels.groupby('mmsi')
 
     # New columns: time of arrival -> the first entry of MMSI grouping, time of departure -> the last entry
-
     arrivals = mmsi_grouping.head(1)[['mmsi', 'date_time_utc']].set_index('mmsi').rename(
-        columns={'date_time_utc': 'arrival_utc'})
+        columns={'timestamp_utc': 'arrival_utc'})
     departures = mmsi_grouping.tail(1)[['mmsi', 'date_time_utc']].set_index('mmsi').rename(
-        columns={'date_time_utc': 'departure_utc'})
+        columns={'timestamp_utc': 'departure_utc'})
     arr_dep = arrivals.merge(departures, left_index=True, right_index=True)
 
-    cols_to_drop = ['date_time_utc', 'lon', 'lat', 'sog', 'cog', 'true_heading', 'nav_status', 'message_nr', 'latlon']
+    # We drop the columns which are not relevant
+    cols_to_drop = ['timestamp_utc', 'lon', 'lat', 'sog', 'cog', 'true_heading', 'nav_status', 'message_nr', 'latlon']
     vessels_info = mmsi_grouping.head(1).drop(columns=cols_to_drop).set_index('mmsi')
 
     vessels_info = arr_dep.merge(vessels_info, left_index=True, right_index=True)
