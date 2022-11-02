@@ -52,9 +52,9 @@ python -m build
 This will create a new folder called `dist` in which the built package will be stored.
 Running either
 ```sh
-pip install ais_analyzer-0.0.1.tar.gz  
+pip install ais_analyzer-*.*.*.tar.gz  
 # or 
-pip install ais_analyzer-0.0.1-py3-none-any.whl
+pip install ais_analyzer-*.*.*-py3-none-any.whl
 ```
 will install the packae as a python module.
 
