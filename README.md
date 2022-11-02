@@ -21,10 +21,10 @@ Norwegian Coastal Administration (https://ais-public.kystverket.no/) or the Dani
   * [Credits](#credits)
 
 ## License
-For the licence of the package, refer to [LICENCE](LICENSE). 
+For the license of the package, refer to [LICENSE](LICENSE). 
 For the dataset that is included in the tests-folder, the norwegian dataset is aquired through (https://ais-public.kystverket.no/), while the danish dataset is aquired throuh (http://web.ais.dk/aisdata/).
 
-The norwegian dataset uses the [NLOD](https://data.norge.no/nlod/en/2.0) licence, as defined by the norwegian government.
+The norwegian dataset uses the [NLOD](https://data.norge.no/nlod/en/2.0) license, as defined by the norwegian government.
 The danish dataset has its own [terms of use](https://dma.dk/safety-at-sea/navigational-information/download-data/conditions-for-the-use-of-data).
 
 
