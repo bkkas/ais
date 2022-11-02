@@ -83,15 +83,15 @@ def add_arrival_and_departure(df: pd.DataFrame) -> pd.DataFrame:
     departures = mmsi_grouping.tail(1)
 
     # New columns: time of arrival and departure
-    arrivals_utc = arrivals[['mmsi', 'timestamp_utc']].set_index('mmsi').rename(
+    arrivals_utc = arrivals.loc[:,['mmsi', 'timestamp_utc']].set_index('mmsi').rename(
         columns={'timestamp_utc': 'arrival_utc'})
-    departures_utc = departures[['mmsi', 'timestamp_utc']].set_index('mmsi').rename(
+    departures_utc = departures.loc[:,['mmsi', 'timestamp_utc']].set_index('mmsi').rename(
         columns={'timestamp_utc': 'departure_utc'})
     arr_dep = arrivals_utc.merge(departures_utc, left_index=True, right_index=True)
 
     # We drop the columns which are not relevant
     cols_to_drop = ['timestamp_utc', 'lon', 'lat', 'sog', 'cog', 'true_heading', 'nav_status', 'message_nr', 'latlon']
-    drop_in_df = [col for col in arr_dep.columns if col in cols_to_drop]
+    drop_in_df = [col for col in arrivals.columns if col in cols_to_drop]
     vessels_info = arrivals.drop(columns=drop_in_df).set_index('mmsi')
 
     vessels_info = arr_dep.merge(vessels_info, left_index=True, right_index=True)

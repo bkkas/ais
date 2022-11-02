@@ -1,0 +1,11 @@
+timestamp_utc,mmsi,lat,lon,nav_status,sog,imo,callsign,ship_type,cargo_type,width,length,draught,dest
+2022-08-05 11:00:00,6969,42,42,Vessel arriving,5.0,424242,,Portcaller,Goldfish,40.0,100.0,9.0,
+2022-08-05 11:05:00,6969,42,42,Vessel mooring,1.0,424242,,Portcaller,Goldfish,40.0,100.0,9.0,
+2022-08-05 12:17:00,7070,41,41,Noisevessel moving through,5.0,11111,,Noise-mover,Swordfish,10.0,50.0,5.0,
+2022-08-05 12:27:00,7070,41,41,Noisevessel moving through,5.1,11111,,Noise-mover,Swordfish,10.0,50.0,5.0,
+2022-08-05 13:00:00,6969,42,42,Vessel in harb,0.0,424242,,Portcaller,Goldfish,40.0,100.0,9.0,
+2022-08-05 13:00:00,7070,41,41,Noisevessel moving through,5.1,11111,,Noise-mover,Swordfish,10.0,50.0,5.0,
+2022-08-05 14:00:00,6969,42,42,Vessel tossing mooring,1.0,424242,,Portcaller,Goldfish,40.0,100.0,9.0,
+2022-08-05 14:00:00,7070,41,41,Noisevessel moving through,5.1,11111,,Noise-mover,Swordfish,10.0,50.0,5.0,
+2022-08-05 14:05:00,6969,42,42,Vessel departing,5.0,424242,,Portcaller,Goldfish,40.0,100.0,9.0,
+2022-08-05 14:05:00,7070,41,41,Noisevessel moving through,5.0,11111,,Noise-mover,Swordfish,10.0,50.0,5.0,
