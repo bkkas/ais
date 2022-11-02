@@ -1,7 +1,7 @@
-from handlers.output_handler import OutputHandler
-from handlers.input_handler import InputHandler
-from handlers.cli_handler import AISCLI
-from commands import statistics, portcalls
+from .handlers.output_handler import OutputHandler
+from .handlers.input_handler import InputHandler
+from .handlers.cli_handler import AISCLI
+from .commands import statistics, portcalls
 
 
 def __main__():
