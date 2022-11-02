@@ -68,7 +68,7 @@ and the package will be removed.
 ## Usage
 Currently it only supports running as a python module.
 This means it has to be called by issuing
-```sh
+```
 python -m ais_analyzer <args>
 ```
 
@@ -98,6 +98,11 @@ options:
 ```
 where `<COMMMAND>` is the last argument provided.
 
+An example of a complete run could look something like
+```
+python -m ais_analyzer --input-file some_data.csv --full --output-file statistics.csv statistcs
+```
+Where `statistics` is the given `<COMMAND>`.
 
 
 ## Credits
