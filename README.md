@@ -11,7 +11,44 @@ Historical AIS data can be freely accessed online, e.g. via the
 Norwegian Coastal Administration (https://ais-public.kystverket.no/) or the Danish Maritime Authority (http://web.ais.dk/aisdata/).
 
 ## Installation
+Currently it is only possible to install by building the project locally. 
+### Requirements
+The package requires `pip` and `build` to build and install the package.
+The `wheel` package is also required to install the project.
+The requirements for running the project are listed in [requirements.txt](requirements.txt).
+### Build and install
+To build the project, download the source code either with `git`:
+```sh
+git clone https://github.com/bkkas/ais
+```
+or by downloading the source code as a zip from the browser.
+
+To build the project, move into the now cloned repository and run 
+```py
+python -m build
+```
+This will create a new folder called `dist` in which the built package will be stored.
+Running either
+```sh
+pip install ais_analyzer-0.0.1.tar.gz  
+# or 
+pip install ais_analyzer-0.0.1-py3-none-any.whl
+```
+will install the packae as a python module.
+
+### Uninstall
+Simply run
+```sh
+pip uninstall ais_analyzer
+```
+and the package will be removed.
 
 ## Usage
+Currently it only supports running as a python module.
+This means it has to be called by issuing
+```sh
+python -m ais_analyserø
+```
+
 
 ## Credits
