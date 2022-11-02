@@ -47,8 +47,35 @@ and the package will be removed.
 Currently it only supports running as a python module.
 This means it has to be called by issuing
 ```sh
-python -m ais_analyserø
+python -m ais_analyzer <args>
 ```
+
+Calling
+```sh
+python -m ais_analyzer -h
+```
+will give the following output
+```
+usage: ais [-h] [--input-file INPUT_FILE] [--full] [--lat LAT] [--lon LON] [--radius RADIUS] [--output-file OUTPUT_FILE] <COMMAND>
+
+AIS analyzer application
+
+positional arguments:
+  <COMMAND>             a command to call on the input data
+
+options:
+  -h, --help            show this help message and exit
+  --input-file INPUT_FILE
+                        the path to the input ais csv file(s)
+  --full                enables the full statistic output
+  --lat LAT             latitude in degrees, use decimal degrees not minutes & seconds
+  --lon LON             longitude in degrees, use decimal degrees not minutes & seconds
+  --radius RADIUS       radius from latlong point in meters
+  --output-file OUTPUT_FILE
+                        output path and name of output csv
+```
+where `<COMMMAND>` is the last argument provided.
+
 
 
 ## Credits
