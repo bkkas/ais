@@ -10,12 +10,25 @@ Live AIS data can be viewed online through a variety of web services.
 Historical AIS data can be freely accessed online, e.g. via the
 Norwegian Coastal Administration (https://ais-public.kystverket.no/) or the Danish Maritime Authority (http://web.ais.dk/aisdata/).
 
+
+## Table of content
+  * [Installation](#installation)
+    * [Requirements](#requirements)
+    * [Build and install](#build-and-install)
+    * [Uninstall](#uninstall)
+  * [Usage](#usage)
+  * [Credits](#credits)
+
 ## Installation
-Currently it is only possible to install by building the project locally. 
+Currently, the package can only be installed by building the project locally. 
 ### Requirements
 The package requires `pip` and `build` to build and install the package.
 The `wheel` package is also required to install the project.
-The requirements for running the project are listed in [requirements.txt](requirements.txt).
+The requirements for running the project are listed in [requirements.txt](requirements.txt), and can be installed with
+```sh
+pip install -r requirements.txt
+```
+
 ### Build and install
 To build the project, download the source code either with `git`:
 ```sh
