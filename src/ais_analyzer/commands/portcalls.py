@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import geopy
 import geopy.distance as gpd
+from typing import Tuple
 import datetime as dt
 
 
@@ -30,7 +31,7 @@ def vessels_in_radius(df: pd.DataFrame, point: tuple, radius: float) -> pd.DataF
     df = df.loc[mask]
 
     # 2.2 If within, calculate if in radius
-    def get_point_distance_center(latlon: tuple[float]) -> float:
+    def get_point_distance_center(latlon: Tuple[float]) -> float:
         """
         :param latlon:
         :return distance from center:
