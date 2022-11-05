@@ -32,12 +32,12 @@ def valid_args(tmp_path_factory):
 
 
 @pytest.fixture
-def single_portcall(tmp_path_factory):
+def single_portcall():
     df = pd.read_csv("data/std_single_portcall.csv")
     yield df
 
 @pytest.fixture
-def recurring_vessel_portcall(tmp_path_factory):
+def recurring_vessel_portcall():
     df = pd.read_csv("data/std_double_portcall.csv")
     yield df
 
@@ -61,7 +61,6 @@ class TestCase:
                           'cargo_type', 'width', 'length', 'draught', 'dest']
         assert len(df.columns) == 14
         assert list(df.columns) == test_col_names
-        assert df.shape[0] == 11
 
     def test_all_portcalls_dataframe(self, all_portcall):
         df = all_portcall
@@ -69,7 +68,6 @@ class TestCase:
                           'cargo_type', 'width', 'length', 'draught', 'dest']
         assert len(df.columns) == 14
         assert list(df.columns) == test_col_names
-        assert df.shape[0] == 16
 
     def test_input_validation(self, none_args):
         # None
