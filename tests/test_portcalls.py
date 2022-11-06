@@ -43,7 +43,12 @@ def recurring_vessel_portcall():
 
 @pytest.fixture
 def all_portcalls():
-    df = pd.read_csv("tests/data/std_double_portcall.csv")
+    df = pd.read_csv("tests/data/std_all_portcalls.csv")
+    yield df
+
+@pytest.fixture
+def no_portcalls():
+    df = pd.read_csv("tests/data/std_no_portcall.csv")
     yield df
 
 class TestCase:
@@ -83,22 +88,33 @@ class TestCase:
 
     def test_one_portcall(self, single_portcall, valid_args):
         """
-        Test simple synthetic portcall
-        Will only show first and last visit to port
-        Does not capture multiple visits
-
+        Test on input dataframe with one vessel making one portcall
         """
 
         portcalled = portcalls.portcalls(single_portcall, valid_args)
         assert portcalled.shape[0] == 1
 
-    def test_recurring_portcalls(self, recurring_vessel_portcall, valid_args):
+    def test_double_portcalls(self, recurring_vessel_portcall, valid_args):
         """
-        Test recurring traffic to port
-
-        Scenarios:
-        - Vessel has at least two visits
+        Test recurring traffic to port. One vessel, two portcalls
+        MMSI: 9999
         """
 
         portcalled = portcalls.portcalls(recurring_vessel_portcall, valid_args)
         assert portcalled.shape[0] == 2
+
+    def test_all_portcalls(self, all_portcalls, valid_args):
+        """
+        There should be three portcalls.
+        Two vessels, one having two portcalls (MMSI: 9999)
+        """
+        portcalled = portcalls.portcalls(all_portcalls, valid_args)
+        assert portcalled.shape[0] == 3
+
+    def test_no_portcalls(self, no_portcalls, valid_args):
+        """
+        When there are no portcalls there should be an empty dataframe (with the correct colums)
+        Input dataframe contains vessel that transits the area
+        """
+        portcalled = portcalls.portcalls(no_portcalls, valid_args)
+        assert portcalled.shape[0] == 0
