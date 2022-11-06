@@ -14,7 +14,7 @@ def none_args(tmp_path_factory):
         'lat': 69.0,
         'lon': None,
         'radius': None,
-        'input_file': "tests/data/std_test_portcalls.csv",
+        'input_file': "tests/data/std_single_portcall.csv",
         'output_file': (tmp_path_factory.mktemp('temp') / "output.csv").__str__()
     }
 
@@ -26,21 +26,25 @@ def valid_args(tmp_path_factory):
         'lat': 42.0,
         'lon': 42.0,
         'radius': 500,
-        'input_file': "tests/data/std_test_portcalls.csv",
+        'input_file': "tests/data/std_single_portcall.csv",
         'output_file': (tmp_path_factory.mktemp('temp') / "output.csv").__str__()
     }
 
 
 @pytest.fixture
 def single_portcall():
-    df = pd.read_csv("data/std_single_portcall.csv")
+    df = pd.read_csv("tests/data/std_single_portcall.csv")
     yield df
 
 @pytest.fixture
 def recurring_vessel_portcall():
-    df = pd.read_csv("data/std_double_portcall.csv")
+    df = pd.read_csv("tests/data/std_double_portcall.csv")
     yield df
 
+@pytest.fixture
+def all_portcalls():
+    df = pd.read_csv("tests/data/std_double_portcall.csv")
+    yield df
 
 class TestCase:
 
@@ -53,7 +57,7 @@ class TestCase:
                           'cargo_type', 'width', 'length', 'draught', 'dest']
         assert len(df.columns) == 14
         assert list(df.columns) == test_col_names
-        assert df.shape[0] == 10
+        assert df.shape[0] == 44
 
     def test_double_portcall_dataframe(self, recurring_vessel_portcall):
         df = recurring_vessel_portcall
@@ -62,8 +66,8 @@ class TestCase:
         assert len(df.columns) == 14
         assert list(df.columns) == test_col_names
 
-    def test_all_portcalls_dataframe(self, all_portcall):
-        df = all_portcall
+    def test_all_portcalls_dataframe(self, all_portcalls):
+        df = all_portcalls
         test_col_names = ['timestamp_utc', 'mmsi', 'lat', 'lon', 'nav_status', 'sog', 'imo', 'callsign', 'ship_type',
                           'cargo_type', 'width', 'length', 'draught', 'dest']
         assert len(df.columns) == 14
