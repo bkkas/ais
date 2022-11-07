@@ -24,7 +24,7 @@ classifiers = [
 ]
 
 [project.scripts]
-ais-analyzer = "ais_analyzer:__main__.__main__"
+ais = "ais_analyzer:__main__.__main__"
 
 [project.urls]
 "Homepage" = "https://github.com/bkkas/ais"
