@@ -1,0 +1,1 @@
+Contains data under the Norwegian licence for Open Government data [(NLOD)](https://data.norge.no/nlod/en/2.0) distributed by LOS VTS, Harald Åsheim.
