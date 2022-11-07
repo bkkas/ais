@@ -131,7 +131,6 @@ def add_arrival_and_departure(df: pd.DataFrame) -> pd.DataFrame:
         # crash a program
         portcalls_df = pd.DataFrame(columns=["arrival_utc", "departure_utc", "mmsi"])
         portcalls_df = portcalls_df.astype({"mmsi": 'float64'})
-        portcalls_df.set_index("mmsi", inplace=True)
         return portcalls_df
 
     # We drop any columns which are not relevant
