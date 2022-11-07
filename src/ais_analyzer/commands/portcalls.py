@@ -134,10 +134,15 @@ def add_arrival_and_departure(df: pd.DataFrame) -> pd.DataFrame:
         portcalls_df.set_index("mmsi", inplace=True)
         return portcalls_df
 
-    # We drop the columns which are not relevant
+    # We drop any columns which are not relevant
     cols_to_drop = ['timestamp_utc', 'lon', 'lat', 'sog', 'cog', 'true_heading', 'nav_status', 'message_nr', 'latlon']
     drop_in_df = [col for col in portcalls_df.columns if col in cols_to_drop]
-    portcalls_df = portcalls_df.drop(columns=drop_in_df).set_index('mmsi')
+    portcalls_df = portcalls_df.drop(columns=drop_in_df)
+
+    # Rearrange column orde
+    first_cols = ["mmsi", "arrival_utc", "departure_utc"]
+    rearranged = first_cols + [c for c in portcalls_df.columns if c not in first_cols]
+    portcalls_df = portcalls_df[rearranged]
 
     return portcalls_df
 
