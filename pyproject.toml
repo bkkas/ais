@@ -23,6 +23,9 @@ classifiers = [
 	"License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
 ]
 
+[project.scripts]
+ais-analyzer = "ais_analyzer:__main__.__main__"
+
 [project.urls]
 "Homepage" = "https://github.com/bkkas/ais"
 "Bug Tracker" = "https://github.com/bkkas/ais/issues"
