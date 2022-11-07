@@ -8,7 +8,7 @@ def get_dk_cols() -> list:
 
 
 def get_standardized_cols() -> dict:
-    lookup_cols = ['time', 'mmsi', 'imo', 'lat', 'lon', 'nav', 'dest', 'lenght', 'draught', 'width', 'sog', 'ship_type',
+    lookup_cols = ['time', 'mmsi', 'imo', 'lat', 'lon', 'nav', 'dest', 'len', 'draught', 'width', 'sog', 'ship_type',
                    'cargo_type', 'name', 'callsign']
     std_cols = ['timestamp_utc', 'mmsi', 'imo', 'lat', 'lon', 'nav_status', 'dest', 'length', 'draught', 'width', 'sog',
                 'ship_type', 'cargo_type', 'name', 'callsign']

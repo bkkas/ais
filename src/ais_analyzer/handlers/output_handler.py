@@ -14,5 +14,5 @@ class OutputHandler:
 
         """
 
-        dataframe.to_csv(self.path, sep)
+        dataframe.to_csv(self.path, sep=sep, index=False)
 

@@ -42,7 +42,6 @@ class InputHandler:
     def _simple_down_sampler(self, df) -> None:
         groups = df.groupby(df.columns[1])
         dfs = []
-        print(f"Cols {df.columns}")
         for name, group_df in groups:
             reduced_df = group_df[~group_df['timestamp_utc'].dt.floor('30s').duplicated()]
             dfs.append(reduced_df)
