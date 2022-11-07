@@ -58,23 +58,30 @@ pip install ais_analyzer-*.*.*-py3-none-any.whl
 ```
 will install the packae as a python module.
 
+Be aware that the `pip` install directory must be in path if you wish to run `ais` as a command, and drop the `python -m ais_analyzer` part.
+For some Linux distributions, this is not the default.
+If you get a warning, adding the folder specified to `$PATH` will fix the issue (usually `$HOME/.local/bin/`).
+
 ### Uninstall
 Simply run
 ```sh
 pip uninstall ais_analyzer
 ```
-and the package will be removed.
+and the package, along with the script, will be removed.
 
 ## Usage
-Currently it only supports running as a python module.
-This means it has to be called by issuing
+The program can be called in two ways, and their usages are equal.
+```
+ais <args>
+```
+or
 ```
 python -m ais_analyzer <args>
 ```
 
 Calling
 ```sh
-python -m ais_analyzer -h
+ais ais_analyzer -h
 ```
 will give the following output
 ```
@@ -100,7 +107,7 @@ where `<COMMMAND>` is the last argument provided.
 
 An example of a complete run could look something like
 ```
-python -m ais_analyzer --input-file some_data.csv --full --output-file statistics.csv statistcs
+ais --input-file some_data.csv --full --output-file statistics.csv statistcs
 ```
 Where `statistics` is the given `<COMMAND>`.
 
