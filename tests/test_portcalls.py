@@ -97,6 +97,7 @@ class TestPortcalls:
 
         portcalled = portcalls.portcalls(single_portcall, valid_args)
         assert portcalled.shape[0] == 1
+        assert portcalled.mmsi.iloc[0] == 6969
 
     def test_double_portcalls(self, recurring_vessel_portcall, valid_args):
         """
@@ -121,4 +122,4 @@ class TestPortcalls:
         Input dataframe contains vessel that transits the area
         """
         portcalled = portcalls.portcalls(no_portcalls, valid_args)
-        assert portcalled.shape[0] == 0
+        assert portcalled.empty
