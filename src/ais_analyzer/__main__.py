@@ -29,7 +29,10 @@ def __main__():
 
     # 4. Output the transformed data
     output_path = user_arguments['output_file']
-    OutputHandler(output_path).output_csv(transformed_data)
+    if output_path:
+        OutputHandler(output_path).output_csv(transformed_data)
+    else:
+        OutputHandler().output_terminal(transformed_data)
 
 
 if __name__ == "__main__":
