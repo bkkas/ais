@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import geopy
 import geopy.distance as gpd
+from typing import Tuple
 import datetime as dt
 
 
@@ -30,13 +31,13 @@ def vessels_in_radius(df: pd.DataFrame, point: tuple, radius: float) -> pd.DataF
     df = df.loc[mask]
 
     # 2.2 If within, calculate if in radius
-    def get_point_distance_center(latlon: tuple[float]) -> float:
+    def get_point_distance_center(_latlon: Tuple[float]) -> float:
         """
-        :param latlon:
+        :param _latlon:
         :return distance from center:
         """
 
-        _point = geopy.Point(latlon)
+        _point = geopy.Point(*_latlon)
         # As long as radius is provided in meter
         # Then this should be meter as well
         return gpd.distance(center, _point).m
@@ -90,8 +91,6 @@ def add_arrival_and_departure(df: pd.DataFrame) -> pd.DataFrame:
     Implementation is strategy 1
     """
 
-
-
     # When timedelta between two consecutive rows are larger than x time, there is a departure-arrival situation
     # We use the function diff() to get this timedelta
     # If a vessel is missing more than some timedelta of AIS data, the vessel is regarded as being departed
@@ -99,6 +98,8 @@ def add_arrival_and_departure(df: pd.DataFrame) -> pd.DataFrame:
 
     portcalls_df = pd.DataFrame()
 
+    # If there are no portcalls, this loop is never entered
+    # Therefore, portcalls_df is empty, and contains no "mmsi" column.
     for ident in df.mmsi.unique():
         # A dataframe with a unique ship
         vessel = df.loc[df.mmsi == ident].reset_index(drop=True)
@@ -122,6 +123,16 @@ def add_arrival_and_departure(df: pd.DataFrame) -> pd.DataFrame:
 
         portcalls_df = pd.concat([portcalls_df, arr], axis=0).reset_index(drop=True)
 
+    # If portcalls_df is empty, running any of the below code causes errors.
+    # We return early if that is the case.
+    if portcalls_df.empty:
+        # Creates a new dataframe that has empty columns with the same names used in the
+        # other returned dataframes to make it so that a call with no portcalls does not
+        # crash a program
+        portcalls_df = pd.DataFrame(columns=["arrival_utc", "departure_utc", "mmsi"])
+        portcalls_df = portcalls_df.astype({"mmsi": 'float64'})
+        portcalls_df.set_index("mmsi", inplace=True)
+        return portcalls_df
 
     # We drop the columns which are not relevant
     cols_to_drop = ['timestamp_utc', 'lon', 'lat', 'sog', 'cog', 'true_heading', 'nav_status', 'message_nr', 'latlon']

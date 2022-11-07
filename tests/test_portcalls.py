@@ -36,22 +36,26 @@ def single_portcall():
     df = pd.read_csv("tests/data/std_single_portcall.csv")
     yield df
 
+
 @pytest.fixture
 def recurring_vessel_portcall():
     df = pd.read_csv("tests/data/std_double_portcall.csv")
     yield df
+
 
 @pytest.fixture
 def all_portcalls():
     df = pd.read_csv("tests/data/std_all_portcalls.csv")
     yield df
 
+
 @pytest.fixture
 def no_portcalls():
     df = pd.read_csv("tests/data/std_no_portcall.csv")
     yield df
 
-class TestCase:
+
+class TestPortcalls:
 
     def test_input_fixtures(self, valid_args):
         assert valid_args['lat'] == 42.0
@@ -113,7 +117,7 @@ class TestCase:
 
     def test_no_portcalls(self, no_portcalls, valid_args):
         """
-        When there are no portcalls there should be an empty dataframe (with the correct colums)
+        When there are no portcalls there should be an empty dataframe (with the correct columns)
         Input dataframe contains vessel that transits the area
         """
         portcalled = portcalls.portcalls(no_portcalls, valid_args)
