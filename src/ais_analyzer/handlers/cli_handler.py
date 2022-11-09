@@ -37,7 +37,6 @@ class AISCLI:
                                 default=None,
                                 help='latitude in degrees, use decimal degrees not minutes & seconds')
 
-
         ais_parser.add_argument('--lon',
                                 action='store',
                                 default=None,
@@ -49,11 +48,16 @@ class AISCLI:
                                 type=float,
                                 help='radius from latlong point in meters')
 
-
         ais_parser.add_argument('--output-file',
                                 action='store',
                                 type=str,
                                 help='output path and name of output csv')
+
+        ais_parser.add_argument('--log',
+                                action='store',
+                                default='info',
+                                choices=["debug", "info", "warning", "critical", "fatal", "error"],
+                                help='logging level when running commands. Defaults to \"info\"')
 
         if args:
             # Args can be sent in as a list from functon call
