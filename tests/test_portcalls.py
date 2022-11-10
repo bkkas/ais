@@ -2,11 +2,6 @@ import pandas as pd
 import pytest
 from src.ais_analyzer.commands import portcalls
 
-"""
-The hardcoded column names in "portcalls" are assumed to be independent of data country origin
-So we need to make sure any formatting/standardizing of the dataframes are done in the input_handler
-"""
-
 
 @pytest.fixture
 def none_args(tmp_path_factory):
@@ -38,7 +33,7 @@ def single_portcall():
 
 
 @pytest.fixture
-def recurring_vessel_portcall():
+def recurring_portcall():
     df = pd.read_csv("tests/data/std_double_portcall.csv")
     yield df
 
@@ -68,8 +63,8 @@ class TestPortcalls:
         assert list(df.columns) == test_col_names
         assert df.shape[0] == 44
 
-    def test_double_portcall_dataframe(self, recurring_vessel_portcall):
-        df = recurring_vessel_portcall
+    def test_double_portcall_dataframe(self, recurring_portcall):
+        df = recurring_portcall
         test_col_names = ['timestamp_utc', 'mmsi', 'lat', 'lon', 'nav_status', 'sog', 'imo', 'callsign', 'ship_type',
                           'cargo_type', 'width', 'length', 'draught', 'dest']
         assert len(df.columns) == 14
@@ -93,19 +88,20 @@ class TestPortcalls:
     def test_one_portcall(self, single_portcall, valid_args):
         """
         Test on input dataframe with one vessel making one portcall
+        MMSI: 6969
         """
 
         portcalled = portcalls.portcalls(single_portcall, valid_args)
         assert portcalled.shape[0] == 1
         assert portcalled.mmsi.iloc[0] == 6969
 
-    def test_double_portcalls(self, recurring_vessel_portcall, valid_args):
+    def test_double_portcalls(self, recurring_portcall, valid_args):
         """
         Test recurring traffic to port. One vessel, two portcalls
         MMSI: 9999
         """
 
-        portcalled = portcalls.portcalls(recurring_vessel_portcall, valid_args)
+        portcalled = portcalls.portcalls(recurring_portcall, valid_args)
         assert portcalled.shape[0] == 2
 
     def test_all_portcalls(self, all_portcalls, valid_args):
@@ -118,7 +114,7 @@ class TestPortcalls:
 
     def test_no_portcalls(self, no_portcalls, valid_args):
         """
-        When there are no portcalls there should be an empty dataframe (with the correct columns)
+        When there are no portcalls there should be an empty dataframe (with sensible columns)
         Input dataframe contains vessel that transits the area
         """
         portcalled = portcalls.portcalls(no_portcalls, valid_args)

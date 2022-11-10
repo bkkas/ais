@@ -3,7 +3,6 @@ import numpy as np
 import geopy
 import geopy.distance as gpd
 from typing import Tuple
-import datetime as dt
 
 
 def vessels_in_radius(df: pd.DataFrame, point: tuple, radius: float) -> pd.DataFrame:
@@ -30,7 +29,7 @@ def vessels_in_radius(df: pd.DataFrame, point: tuple, radius: float) -> pd.DataF
     # Get all entries within the square
     df = df.loc[mask]
 
-    # 2.2 If within, calculate if in radius
+    # 2.2 If within square, calculate if in radius (more expensive)
     def get_point_distance_center(_latlon: Tuple[float]) -> float:
         """
         :param _latlon:
@@ -61,7 +60,7 @@ def validate_input_parameters(args):
 
 def remove_transiting_vessels(vessels: pd.DataFrame) -> pd.DataFrame:
     # First strategy: filter on speed (knots)
-    # We set the threshold to account for drift (if ships are on ancher or similarly)
+    # We set the threshold to account for drift (if ships are on anchor or similarly)
     speed_threshold = 2
     vessels_no_transits = vessels.loc[vessels['sog'] < speed_threshold]
 
@@ -138,7 +137,7 @@ def add_arrival_and_departure(df: pd.DataFrame) -> pd.DataFrame:
     drop_in_df = [col for col in portcalls_df.columns if col in cols_to_drop]
     portcalls_df = portcalls_df.drop(columns=drop_in_df)
 
-    # Rearrange column orde
+    # Rearrange column order
     first_cols = ["mmsi", "arrival_utc", "departure_utc"]
     rearranged = first_cols + [c for c in portcalls_df.columns if c not in first_cols]
     portcalls_df = portcalls_df[rearranged]
@@ -147,7 +146,8 @@ def add_arrival_and_departure(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def portcalls(input_df: pd.DataFrame, args: dict) -> pd.DataFrame:
-    """Identifies vessels which have been idle in a given geographic area
+    """
+    Identifies vessels which have been idle in a given geographic area
 
     <Only supports geo point and radius, will support polygon in future>
 
