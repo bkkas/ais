@@ -50,12 +50,34 @@ def vessels_in_radius(df: pd.DataFrame, point: tuple, radius: float) -> pd.DataF
 
 
 def validate_input_parameters(args):
-    _required_list = ['lat', 'lon', 'radius']
-    _args_present = [args[arg] for arg in _required_list]
+    _required_list_rad = ['lat', 'lon', 'radius']
+    _required_list_poly = ['polygon']
 
-    if None in _args_present:
-        _missing = [arg for arg, present in zip(_required_list, _args_present) if not present]
-        raise KeyError(f"Missing arguments for portcalls: {_missing}")
+    _args_rad = [args[arg] for arg in _required_list_rad]
+    _args_poly = [args[arg] for arg in _required_list_poly]
+
+    if None in _args_poly:
+        #!!!!!!!!!!!!!!!!!!!!!!
+
+        # Check if None input values for radius+coord option
+        _missing = [arg for arg, present in zip(_required_list_rad, _args_rad) if not present]
+        if _missing:
+            # This could also mean there are no inputs for either radius or poly
+            raise KeyError(f"Missing arguments for portcalls with radius option: {_missing}")
+
+    else:
+        # Polygon (and not radius and center) is given
+        # Minimum number of geographical coordinates to make a polygon is three
+        coords = args['polygon']
+        if len(coords) < 3: raise KeyError(f"The minimum number of coordinates is three, {len(coords)} was given")
+
+        # Only support for north-east hemisphere per now
+        # The lat coordinates can be -90 to 90, longitude can be -180 to 180 (W and S is negative)
+        for lat, lon in coords:
+            if (lat > 90) or (lat < -90): raise KeyError(f"Latitude can not exceed 90 degrees")
+            if (lon > 180) or (lon < -180): raise KeyError(f"Longitude can not exceed 180 degrees")
+
+
 
 
 def remove_transiting_vessels(vessels: pd.DataFrame) -> pd.DataFrame:
@@ -145,6 +167,15 @@ def add_arrival_and_departure(df: pd.DataFrame) -> pd.DataFrame:
     return portcalls_df
 
 
+def vessels_in_polygon(input_df: pd.DataFrame, polygon: list) -> pd.DataFrame:
+    # First we check if vessels within square (cheap)
+
+
+    # Then we check if vessels within polygon
+
+    return None
+
+
 def portcalls(input_df: pd.DataFrame, args: dict) -> pd.DataFrame:
     """
     Identifies vessels which have been idle in a given geographic area
@@ -155,10 +186,15 @@ def portcalls(input_df: pd.DataFrame, args: dict) -> pd.DataFrame:
     # Input validation
     validate_input_parameters(args)
 
-    # Step 1: Filter on ships that are in the radius
+    # Step 1: Filter on ships that are in the specified radius/polygon
     center_coord = (args['lat'], args['lon'])
     radius = args['radius']
-    vessels_rad = vessels_in_radius(input_df, center_coord, radius)
+    polygon = args['polygon']
+    if radius is not None:
+        vessels_rad = vessels_in_radius(input_df, center_coord, radius)
+    else:
+        vessels_poly = vessels_in_polygon(input_df, polygon)
+
 
     # Step 2: Filter on vessels that are idle at some point - remove the vessels that are transiting
     # - Threshold on speed? How long should the vessel be below speed threshold to consider "idle"/in port?
