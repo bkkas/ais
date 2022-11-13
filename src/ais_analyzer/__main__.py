@@ -37,18 +37,17 @@ def __main__():
     # 2. Loading the data using input handler
     input_path = user_arguments['input_file']
     input_handler = InputHandler(path=input_path)
-    input_data = logger.time_info("Test 1", InputHandler(path=input_path).get_data)
-    input_data = logger.time_info("Test 2", InputHandler.get_data, input_handler)
+    input_data = logger.time_info("Loading data", InputHandler.get_data, input_handler)
     logger.log_memory(input_data)
 
     # 3. Calling the command on the data
     implemented_commands = {'statistics': statistics.statistics, 'portcalls': portcalls.portcalls}
     user_command = user_arguments['command']
-    logger.info(f"Command: {user_command}")
-    _start = time.time()
-    transformed_data = implemented_commands[user_command](input_data, user_arguments)
-    _taken = time.time() - _start
-    logger.info(f"Command \"{user_command}\" took {_taken:.4f}s")
+    transformed_data = logger.time_info(f"Command: {user_command}",
+                                        implemented_commands[user_command], # Command
+                                        input_data,     # Arg for command
+                                        user_arguments  # Arg for command
+                                        )
 
     # 4. Output the transformed data
     output_path = user_arguments['output_file']
