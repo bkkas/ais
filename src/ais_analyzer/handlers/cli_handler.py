@@ -59,6 +59,13 @@ class AISCLI:
                                 choices=["debug", "info", "warning", "critical", "fatal", "error"],
                                 help='logging level when running commands. Defaults to \"info\"')
 
+        ais_parser.add_argument('--log-cli',
+                                action='store',
+                                default="false",
+                                choices=["true", "false", "cli", "file"],
+                                type=str,
+                                help='whether logging should be done to file or cmd. Defaults to file (False)')
+
         if args:
             # Args can be sent in as a list from functon call
             self.args = ais_parser.parse_args(args=args)
