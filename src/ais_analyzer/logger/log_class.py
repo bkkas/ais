@@ -82,13 +82,23 @@ class AisLogger(logging.getLoggerClass()):
                     self.info(f"Memory usage {df_name}: {mem:.3f}{sign}{postfix}")
         try:
             mem_series
-            self.debug(
-                f"Memory usage {df_name}:\n"
-                f"{spacing} \n"
-                f"{mem_series} \n"
-                f"Total mem: {mem:.3f} {postfix}\n"
-                f"{spacing}"
-            )
+            if msg:
+                self.debug(
+                    f"{msg}\n"
+                    f"Memory usage {df_name}:\n"
+                    f"{spacing} \n"
+                    f"{mem_series} \n"
+                    f"Total mem: {mem:.3f} {postfix}\n"
+                    f"{spacing}"
+                )
+            else:
+                self.debug(
+                    f"Memory usage {df_name}:\n"
+                    f"{spacing} \n"
+                    f"{mem_series} \n"
+                    f"Total mem: {mem:.3f} {postfix}\n"
+                    f"{spacing}"
+                )
         except NameError:
             # If mem_series is not defined
             # then pass
