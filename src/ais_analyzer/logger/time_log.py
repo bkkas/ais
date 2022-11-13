@@ -24,12 +24,13 @@ def time_info_call(logger: logging.Logger, msg: str, func: Callable, *args, **kw
     for the root or main, this is just the imported "logging" module.
     Msg is the message that is to be printed.
     Generally, this should reference the name of the function.
-    Function is the called object, and *args are the arguments passed to func
+    Function is the called object, and *args and **kwargs are the arguments passed to func
 
     :param logger:
     :param msg:
     :param func:
     :param args:
+    :param kwargs:
     :return:
     """
     logger.info(msg)
