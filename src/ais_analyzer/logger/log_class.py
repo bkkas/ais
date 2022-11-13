@@ -37,18 +37,35 @@ class AisLogger(logging.getLoggerClass()):
         The same as time_info, but does not need to call the function itself.
         Can be used around a for loop or similar, instead of having to move the
         loop into a separate function.
+        Also supports timeing each iteration of a loop.
+
         Usage:
         gen = logger.time_info_generator("msg")
         next(gen)
         # Function call or loop or execution to time
         next(gen)
+        #### or
+        gen = logger.time_info_generator("msg")
+        next(gen)
+        for item in something:
+            ...
+            gen.send(something)
+            ...
+        next(gen)
+
 
         :param msg:
         :return:
         """
+        # TODO possible expansion to x = yield?
         self.info(msg)
         start = time.time()
-        yield
+        y_msg = yield
+        while y_msg:
+            taken = time.time() - start
+            self.debug(f"Message sent: {y_msg}")
+            if self.getEffectiveLevel() >= 10:
+                self.info(f"{msg} time taken so far: {taken:.4f}s")
         taken = time.time() - start
         self.info(f"{msg} took {taken:.4f}s")
         yield
