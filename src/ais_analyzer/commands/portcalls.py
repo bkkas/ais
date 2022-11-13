@@ -4,8 +4,9 @@ import geopy
 import geopy.distance as gpd
 from typing import Tuple
 import logging
-from ..logger.time_log import time_info_call
+from ..logger.log_class import AisLogger
 
+logging.setLoggerClass(AisLogger)
 logger_ = logging.getLogger("portcalls")
 
 
@@ -165,7 +166,7 @@ def portcalls(input_df: pd.DataFrame, args: dict) -> pd.DataFrame:
     # Step 1: Filter on ships that are in the radius
     center_coord = (args['lat'], args['lon'])
     radius = args['radius']
-    vessels_rad = time_info_call(logger, "Vessels in radius", vessels_in_radius, input_df, center_coord, radius)
+    vessels_rad = logger.time_info("Vessels in radius", vessels_in_radius, input_df, center_coord, radius)
     # vessels_rad = vessels_in_radius(input_df, center_coord, radius)
 
     # Step 2: Filter on vessels that are idle at some point - remove the vessels that are transiting
