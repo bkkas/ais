@@ -32,6 +32,27 @@ class AisLogger(logging.getLoggerClass()):
         self.info(f"{msg} took {taken:.4f}s")
         return ret_val
 
+    def time_info_generator(self, msg: str):
+        """
+        The same as time_info, but does not need to call the function itself.
+        Can be used around a for loop or similar, instead of having to move the
+        loop into a separate function.
+        Usage:
+        gen = logger.time_info_generator("msg")
+        next(gen)
+        # Function call or loop or execution to time
+        next(gen)
+
+        :param msg:
+        :return:
+        """
+        self.info(msg)
+        start = time.time()
+        yield
+        taken = time.time() - start
+        self.info(f"{msg} took {taken:.4f}s")
+        yield
+
     def log_memory(self, df: [DataFrame, Series], df_name="", msg="", deep=False, agg=True) -> None:
         # For better readability in logging a series of memory
         spacing = 25 * '-'
