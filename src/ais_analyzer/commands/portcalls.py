@@ -5,13 +5,12 @@ import geopy.distance as gpd
 from typing import Tuple
 import logging
 from ..logger.time_log import time_info_call
-import datetime as dt
 
-logger = logging.getLogger(__name__)
+logger_ = logging.getLogger("portcalls")
 
 
 def vessels_in_radius(df: pd.DataFrame, point: tuple, radius: float) -> pd.DataFrame:
-
+    logger = logger_.getChild("vessels_in_radius")
     # 1.1 Check if within square (cheap).
 
     # First we get the N/E/S/W bounds of the square
@@ -64,6 +63,7 @@ def validate_input_parameters(args):
 
 
 def remove_transiting_vessels(vessels: pd.DataFrame) -> pd.DataFrame:
+    logger = logger_.getChild("remove_transiting_vessels")
     # First strategy: filter on speed (knots)
     # We set the threshold to account for drift (if ships are on ancher or similarly)
     speed_threshold = 2
@@ -94,6 +94,7 @@ def add_arrival_and_departure(df: pd.DataFrame) -> pd.DataFrame:
 
     Implementation is strategy 1
     """
+    logger = logger_.getChild("add_arrival_and_departure")
 
     # When timedelta between two consecutive rows are larger than x time, there is a departure-arrival situation
     # We use the function diff() to get this timedelta
@@ -152,6 +153,7 @@ def portcalls(input_df: pd.DataFrame, args: dict) -> pd.DataFrame:
     <Only supports geo point and radius, will support polygon in future>
 
     """
+    logger = logger_.getChild("portcalls")
     # Input validation
     validate_input_parameters(args)
 
