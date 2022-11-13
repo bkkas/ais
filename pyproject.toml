@@ -29,3 +29,8 @@ ais = "ais_analyzer:__main__.__main__"
 [project.urls]
 "Homepage" = "https://github.com/bkkas/ais"
 "Bug Tracker" = "https://github.com/bkkas/ais/issues"
+
+# Testing
+[tool.pytest.ini_options]
+log_cli = true
+log_cli_level = "debug"
