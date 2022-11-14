@@ -248,8 +248,7 @@ def portcalls(input_df: pd.DataFrame, args: dict) -> pd.DataFrame:
     """
     Identifies vessels which have been idle in a given geographic area
 
-    <Only supports geo point and radius, will support polygon in future>
-
+    Supports both Polygon and Radius
     """
     # Input validation, throws keyerror if any required combination of user input is missing (None)
     validate_input_parameters(args)
