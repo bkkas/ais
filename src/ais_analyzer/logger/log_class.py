@@ -1,10 +1,24 @@
 import logging
 import time
-from typing import Callable
+from typing import Callable, Generator
 from pandas import DataFrame, Series
 
 
 class AisLogger(logging.getLoggerClass()):
+    """
+    A custom logging class made for the ais-analyzer package.
+    It needs to be set by using `logging.setLoggerClass(AisLogger)` to get access to its functionality.
+    This means that anywhere this class is intended to be used, this code should be run first:
+    >>> logging.setLoggerClass(AisLogger)
+    >>> logger = logging.getLogger(__name__)  # Or other name that is desired
+    IDE-s are generally not clever enough to autocomplete the new functions, so
+    knowing what they can do beforehand is a great advantage.
+
+    Implements:
+    time_info(msg: str, func: Callable, *args, **kwargs) -> what Callable returns
+    time_info_generator(msg: str) -> Generator
+    log_memory(df: [DataFrame, Series], df_name: str, msg: str, deep: Bool, agg: Bool) -> None
+    """
 
     def __init__(self, name: str):
         logging.Logger.__init__(self, name)
@@ -32,7 +46,7 @@ class AisLogger(logging.getLoggerClass()):
         self.info(f"{msg} took {taken:.4f}s")
         return ret_val
 
-    def time_info_generator(self, msg: str):
+    def time_info_generator(self, msg: str) -> Generator:
         """
         The same as time_info, but does not need to call the function itself.
         Can be used around a for loop or similar, instead of having to move the
@@ -63,9 +77,10 @@ class AisLogger(logging.getLoggerClass()):
         y_msg = yield
         while y_msg:
             taken = time.time() - start
-            self.debug(f"Message sent: {y_msg}")
-            if self.getEffectiveLevel() >= 10:
-                self.info(f"{msg} time taken so far: {taken:.4f}s")
+            self.debug(f"Message sent: {y_msg}\n" +
+                       f"{' '*10}" +
+                       f"{msg} time taken so far: {taken:.4f}s")
+            y_msg = yield
         taken = time.time() - start
         self.info(f"{msg} took {taken:.4f}s")
         yield
