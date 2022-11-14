@@ -1,7 +1,7 @@
 import argparse
 
 
-class AISCLI:
+class CommandLineInterfaceHandler:
     """CLI input reader class for the AIS analyzer application
 
     <docs here>
@@ -47,6 +47,12 @@ class AISCLI:
                                 default=None,
                                 type=float,
                                 help='radius from latlong point in meters')
+
+        ais_parser.add_argument('--polygon',
+                                action='store',
+                                default=None,
+                                type=str,
+                                help='list of coordinate tuple pairs [(lat, lon), (lat, lon)...] MINIMUM 3')
 
         ais_parser.add_argument('--output-file',
                                 action='store',

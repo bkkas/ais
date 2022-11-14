@@ -3,7 +3,7 @@ import time
 
 from .handlers.output_handler import OutputHandler
 from .handlers.input_handler import InputHandler
-from .handlers.cli_handler import AISCLI
+from .handlers.cli_handler import CommandLineInterfaceHandler
 from .commands import statistics, portcalls
 from .logger.log_init import log_init
 from .logger.log_class import AisLogger
@@ -21,7 +21,7 @@ def __main__():
 
     # 1. Getting the user arguments from the command line
     # Instantiating the CLI and getting arguments
-    cli = AISCLI()
+    cli = CommandLineInterfaceHandler()
     user_arguments = cli.get_args(asdict=True)
     # Get the logging level and set the log-class to
     # custom logger
