@@ -33,4 +33,4 @@ ais = "ais_analyzer:__main__.__main__"
 # Testing
 [tool.pytest.ini_options]
 log_cli = true
-log_cli_level = "debug"
+log_cli_level = "info"
