@@ -4,6 +4,13 @@ import geopy
 import geopy.distance as gpd
 from shapely.geometry import Point, Polygon
 from typing import Tuple
+import logging
+from ..logger.log_class import AisLogger
+
+# Initiates a logger with a custom logger class
+# Has to be called before the logger is constructed
+logging.setLoggerClass(AisLogger)
+logger_ = logging.getLogger("portcalls")
 
 
 def validate_input_parameters(args):
@@ -51,6 +58,7 @@ def vessels_in_radius(df: pd.DataFrame, point: tuple, radius: float) -> pd.DataF
     :param radius: a radius
     :return: A dataframe containing the rows within the specified circle
     """
+    logger = logger_.getChild("vessels_in_radius")
     # 1.1 Check if within square (cheap).
 
     # First we get the N/E/S/W bounds of the square
@@ -155,6 +163,7 @@ def vessels_in_polygon(input_df: pd.DataFrame, coordinates: list) -> pd.DataFram
 
 
 def remove_transiting_vessels(vessels: pd.DataFrame) -> pd.DataFrame:
+    logger = logger_.getChild("remove_transiting_vessels")
     # First strategy: filter on speed (knots)
     # We set the threshold to account for drift (if ships are on anchor or similarly)
     speed_threshold = 2
@@ -186,6 +195,7 @@ def add_arrival_and_departure(df: pd.DataFrame) -> pd.DataFrame:
 
     Implementation is strategy 1
     """
+    logger = logger_.getChild("add_arrival_and_departure")
 
     # When timedelta between two consecutive rows are larger than x time, there is a departure-arrival situation
     # We use the function diff() to get this timedelta
@@ -196,8 +206,11 @@ def add_arrival_and_departure(df: pd.DataFrame) -> pd.DataFrame:
 
     # If there are no portcalls, this loop is never entered
     # Therefore, portcalls_df is empty, and contains no "mmsi" column.
+    gen = logger.time_info_generator("For loop unique mmsi")
+    next(gen)
     for ident in df.mmsi.unique():
         # A dataframe with a unique ship
+        gen.send(f"Iter {ident}")
         vessel = df.loc[df.mmsi == ident].reset_index(drop=True)
 
         # Calculating the timedelta of preceding row(s)
@@ -218,6 +231,7 @@ def add_arrival_and_departure(df: pd.DataFrame) -> pd.DataFrame:
         arr.insert(1, "departure_utc", dep)
 
         portcalls_df = pd.concat([portcalls_df, arr], axis=0).reset_index(drop=True)
+    next(gen)
 
     # If portcalls_df is empty, running any of the below code causes errors.
     # We return early if that is the case.
@@ -250,15 +264,18 @@ def portcalls(input_df: pd.DataFrame, args: dict) -> pd.DataFrame:
 
     Supports both Polygon and Radius
     """
+    # Creates logger
+    logger = logger_.getChild("portcalls")
     # Input validation, throws keyerror if any required combination of user input is missing (None)
     validate_input_parameters(args)
 
     # Step 1: Remove the vessels that are transiting
-    vessels_idle = remove_transiting_vessels(input_df)
+    vessels_idle = logger.time_info("Remove transiting vessels", remove_transiting_vessels, input_df)
 
     # Step 2: Filter on ships that are in the specified radius/polygon
     center_coord = (args['lat'], args['lon'])
     radius = args['radius']
+
     polygon = args['polygon']
     if polygon is not None:
         vessels_in_area = vessels_in_polygon(vessels_idle, polygon)

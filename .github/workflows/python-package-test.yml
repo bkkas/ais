@@ -39,4 +39,4 @@ jobs:
       # Running pytest
     - name: Test with pytest
       run: |
-        python -m pytest
+        python -m pytest --log-cli-level=INFO
