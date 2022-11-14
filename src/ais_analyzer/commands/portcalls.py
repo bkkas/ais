@@ -2,11 +2,55 @@ import pandas as pd
 import numpy as np
 import geopy
 import geopy.distance as gpd
+from shapely.geometry import Point, Polygon
 from typing import Tuple
 
 
-def vessels_in_radius(df: pd.DataFrame, point: tuple, radius: float) -> pd.DataFrame:
+def validate_input_parameters(args):
+    _required_list_rad = ['lat', 'lon', 'radius']
+    _required_list_poly = ['polygon']
 
+    _args_rad = [args[arg] for arg in _required_list_rad]
+    _args_poly = [args[arg] for arg in _required_list_poly]
+
+    # Check if polygon is not given
+    if None in _args_poly:
+
+        # Check if radius and center coordinates are given
+        _missing = [arg for arg, present in zip(_required_list_rad, _args_rad) if not present]
+        if _missing:
+            # This could also mean there are no inputs for either radius or poly
+            raise KeyError(f"Missing arguments for portcalls with radius option: {_missing}")
+
+    else:
+        # Polygon is given
+        # Minimum number of geographical coordinates to make a polygon is three
+        coords = args['polygon']
+        if len(coords) < 3:
+            raise KeyError(f"The minimum number of coordinates is three, {len(coords)} was given")
+
+        # Check if order of coordinates makes up a valid polygon
+        coords = [coord[::-1] for coord in coords]
+        if Polygon(coords).is_valid is False:
+            raise KeyError(f"The order of the coordinates given does not make up a valid polygon")
+
+        # Only support for north-east hemisphere per now
+        # The lat coordinates can be -90 to 90, longitude can be -180 to 180 (W and S is negative)
+        for lat, lon in coords:
+            if (lat > 90) or (lat < -90):
+                raise KeyError(f"Latitude can not exceed 90 degrees")
+            if (lon > 180) or (lon < -180):
+                raise KeyError(f"Longitude can not exceed 180 degrees")
+
+
+def vessels_in_radius(df: pd.DataFrame, point: tuple, radius: float) -> pd.DataFrame:
+    """
+
+    :param df: Input dataframe containing rows with coordinates
+    :param point: a center coordinate point
+    :param radius: a radius
+    :return: A dataframe containing the rows within the specified circle
+    """
     # 1.1 Check if within square (cheap).
 
     # First we get the N/E/S/W bounds of the square
@@ -49,35 +93,65 @@ def vessels_in_radius(df: pd.DataFrame, point: tuple, radius: float) -> pd.DataF
     return df
 
 
-def validate_input_parameters(args):
-    _required_list_rad = ['lat', 'lon', 'radius']
-    _required_list_poly = ['polygon']
+def vessels_in_polygon(input_df: pd.DataFrame, coordinates: list) -> pd.DataFrame:
+    """
 
-    _args_rad = [args[arg] for arg in _required_list_rad]
-    _args_poly = [args[arg] for arg in _required_list_poly]
+    :param input_df: A dataframe containing input vessels
+    :param coordinates: a list of tuples containing (latitude, longitude) coordinates making up a polygon
+    :return: the vessels in the input dataframe which are within the given polygon
+    """
 
-    if None in _args_poly:
-        #!!!!!!!!!!!!!!!!!!!!!!
+    # FIRST PART
+    # First we check if vessels within square (cheap)
+    # We get the "bounding box" made up of the extreme in west-east-north-south directions
+    n_bound = coordinates[0][0]
+    s_bound = coordinates[0][0]
+    w_bound = coordinates[0][1]
+    e_bound = coordinates[0][1]
 
-        # Check if None input values for radius+coord option
-        _missing = [arg for arg, present in zip(_required_list_rad, _args_rad) if not present]
-        if _missing:
-            # This could also mean there are no inputs for either radius or poly
-            raise KeyError(f"Missing arguments for portcalls with radius option: {_missing}")
+    for lat, lon in coordinates:
+        if lat < s_bound:
+            s_bound = lat
+        if lat > n_bound:
+            n_bound = lat
+        if lon < w_bound:
+            w_bound = lon
+        if lon > e_bound:
+            e_bound = lon
 
-    else:
-        # Polygon (and not radius and center) is given
-        # Minimum number of geographical coordinates to make a polygon is three
-        coords = args['polygon']
-        if len(coords) < 3: raise KeyError(f"The minimum number of coordinates is three, {len(coords)} was given")
+    # Boolean masks
+    n_mask = input_df['lat'] < n_bound
+    e_mask = input_df['lon'] < e_bound
+    s_mask = input_df['lat'] > s_bound
+    w_mask = input_df['lon'] > w_bound
 
-        # Only support for north-east hemisphere per now
-        # The lat coordinates can be -90 to 90, longitude can be -180 to 180 (W and S is negative)
-        for lat, lon in coords:
-            if (lat > 90) or (lat < -90): raise KeyError(f"Latitude can not exceed 90 degrees")
-            if (lon > 180) or (lon < -180): raise KeyError(f"Longitude can not exceed 180 degrees")
+    mask_lat = np.logical_and(n_mask, s_mask)
+    mask_lon = np.logical_and(w_mask, e_mask)
+    mask = np.logical_and(mask_lat, mask_lon)
+
+    # Entries/rows within bounding box
+    input_df = input_df[mask]
+
+    # SECOND PART
+    # Then we check if vessels within polygon
+
+    # We work with a series containing the coordinates instead of the whole df. The indexing is all that matters
+    latlon = pd.Series(zip(input_df.loc[:, 'lat'], input_df.loc[:, 'lon']))
+
+    # The shapely Polygon object uses (x, y), which means we must reverse the coordinates so they are [(lon, lat)..]
+    coordinates = [coord[::-1] for coord in coordinates]
+    poly = Polygon(coordinates)
 
 
+    def within_poly(coord: Tuple, polygon=poly) -> bool:
+        # Reversing the coordinate tuple so that the format is (lon, lat)
+        lonlat = coord[::-1]
+        return Point(lonlat).within(polygon)
+
+    within_mask = latlon.map(within_poly)
+    df = input_df.loc[within_mask]
+
+    return df
 
 
 def remove_transiting_vessels(vessels: pd.DataFrame) -> pd.DataFrame:
@@ -89,6 +163,7 @@ def remove_transiting_vessels(vessels: pd.DataFrame) -> pd.DataFrame:
     # Second strategy: filter on time
     # If vessel spend less than x time in area, remove all instances
     # But for now include all, independent of time in area
+    vessels_no_transits.reset_index(drop=True, inplace=True)
 
     return vessels_no_transits
 
@@ -164,16 +239,9 @@ def add_arrival_and_departure(df: pd.DataFrame) -> pd.DataFrame:
     rearranged = first_cols + [c for c in portcalls_df.columns if c not in first_cols]
     portcalls_df = portcalls_df[rearranged]
 
+    #portcalls_df.reset_index(drop=True, inplace=True)
+
     return portcalls_df
-
-
-def vessels_in_polygon(input_df: pd.DataFrame, polygon: list) -> pd.DataFrame:
-    # First we check if vessels within square (cheap)
-
-
-    # Then we check if vessels within polygon
-
-    return None
 
 
 def portcalls(input_df: pd.DataFrame, args: dict) -> pd.DataFrame:
@@ -183,26 +251,22 @@ def portcalls(input_df: pd.DataFrame, args: dict) -> pd.DataFrame:
     <Only supports geo point and radius, will support polygon in future>
 
     """
-    # Input validation
+    # Input validation, throws keyerror if any required combination of user input is missing (None)
     validate_input_parameters(args)
 
-    # Step 1: Filter on ships that are in the specified radius/polygon
+    # Step 1: Remove the vessels that are transiting
+    vessels_idle = remove_transiting_vessels(input_df)
+
+    # Step 2: Filter on ships that are in the specified radius/polygon
     center_coord = (args['lat'], args['lon'])
     radius = args['radius']
     polygon = args['polygon']
-    if radius is not None:
-        vessels_rad = vessels_in_radius(input_df, center_coord, radius)
+    if polygon is not None:
+        vessels_in_area = vessels_in_polygon(vessels_idle, polygon)
     else:
-        vessels_poly = vessels_in_polygon(input_df, polygon)
-
-
-    # Step 2: Filter on vessels that are idle at some point - remove the vessels that are transiting
-    # - Threshold on speed? How long should the vessel be below speed threshold to consider "idle"/in port?
-    # - Check if geo position stays within a certain area over certain amount of time?
-    vessels_idle = remove_transiting_vessels(vessels_rad)
+        vessels_in_area = vessels_in_radius(vessels_idle, center_coord, radius)
 
     # Step 3: Add two columns to df: arrive and depart
-    # This is the first and last rows of a grouping on MMSI
-    vessels_arrdep = add_arrival_and_departure(vessels_idle)
+    vessels_arrdep = add_arrival_and_departure(vessels_in_area)
 
     return vessels_arrdep
