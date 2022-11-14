@@ -24,12 +24,12 @@ class TestCase:
 
     def test_cli_initiates(self, args_):
         try:
-            cli_handler.AISCLI(args=args_)
+            cli_handler.CommandLineInterfaceHandler(args=args_)
         except Exception as e:
             assert False, f"Exception raised: {e}"
 
     def test_cli_retain_args(self, args_, arguments_passed):
-        ais_cli = cli_handler.AISCLI(args=args_)
+        ais_cli = cli_handler.CommandLineInterfaceHandler(args=args_)
         arg_dict = ais_cli.get_args(asdict=True)
         for key, item in arguments_passed.items():
             assert arg_dict.get(key) == item
@@ -40,18 +40,18 @@ class TestCase:
         # near impossible to access with normal error handling,
         # as it exits out of the program on a wrong argument
         with pytest.raises(SystemExit):
-            cli_handler.AISCLI(args=args_)
+            cli_handler.CommandLineInterfaceHandler(args=args_)
 
     def test_cli_default_full(self, args_):
         # Full should not be True by default, unless
         # named to reflect the chane in state.
-        ais_cli = cli_handler.AISCLI(args=args_)
+        ais_cli = cli_handler.CommandLineInterfaceHandler(args=args_)
         arg_dict = ais_cli.get_args(asdict=True)
         assert not arg_dict.get('full')
 
     def test_cli_full_arg_should_make_full(self, args_):
         args_.append('--full')
-        ais_cli = cli_handler.AISCLI(args=args_)
+        ais_cli = cli_handler.CommandLineInterfaceHandler(args=args_)
         arg_dict = ais_cli.get_args(asdict=True)
         assert arg_dict.get('full')
 

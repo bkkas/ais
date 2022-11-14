@@ -1,6 +1,6 @@
 from .handlers.output_handler import OutputHandler
 from .handlers.input_handler import InputHandler
-from .handlers.cli_handler import AISCLI
+from .handlers.cli_handler import CommandLineInterfaceHandler
 from .commands import statistics, portcalls
 
 
@@ -16,7 +16,7 @@ def __main__():
 
     # 1. Getting the user arguments from the command line
     # Instantiating the CLI and getting arguments
-    cli = AISCLI()
+    cli = CommandLineInterfaceHandler()
     user_arguments = cli.get_args(asdict=True)
     # 2. Loading the data using input handler
     input_path = user_arguments['input_file']
