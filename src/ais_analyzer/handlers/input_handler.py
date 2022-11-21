@@ -11,6 +11,10 @@ class InputHandler:
 
     def __init__(self, path=None):
         self.path = path
+        self.dk_data = False
+        self.data = None
+
+    def read_data(self):
         self.data = self._read_from_csv()
 
     def _infer_csv_sep(self, path: str) -> str:
@@ -22,6 +26,7 @@ class InputHandler:
         if sep == ';':
             return get_no_cols()
         if sep == ',':
+            self.dk_data = True
             return get_dk_cols()
 
     def _standardize_cols(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -31,7 +36,7 @@ class InputHandler:
         # replacing with standards
         for i, col in enumerate(columns):
             for key, value in col_std.items():
-                if key in col:
+                if key in col.lower():
                     columns[i] = value
 
         df.columns = columns
@@ -42,6 +47,7 @@ class InputHandler:
         if sep == ';':
             return get_no_dtypes()
         if sep == ',':
+            self.dk_data = True
             return get_dk_dtypes()
 
     def _simple_down_sampler(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -52,6 +58,27 @@ class InputHandler:
             dfs.append(reduced_df)
         reduced_df = pd.concat(dfs).sort_index()
         return reduced_df
+
+    def _remove_unknown(self, df: pd.DataFrame, dtypes: dict) -> pd.DataFrame:
+        map = {"Under way using engine": 0,
+               "At anchor": 1,
+               "Not under command": 2,
+               "Restricted maneuverability": 3,
+               "Constrained by her draught": 4,
+               "Moored": 5,
+               "Aground": 6,
+               "Engaged in fishing": 7,
+               "Under way sailing": 8,
+               "Reserved for future amendment [HSC]": 9,
+               "Reserved for future amendment [WIG]": 10,
+               "Power-driven vessel towing astern": 11,
+               "Power-driven vessel pushing ahead or towing alongside": 12,
+               "Reserved for future use": 13,
+               "AIS-SART (active)": 14,
+               "Unknown value": 15
+        }
+        df["Navigational status"] = df["Navigational status"].replace(to_replace=map)
+        return df.astype(dtypes)
 
     def _read_from_csv(self) -> pd.DataFrame:
 
@@ -65,12 +92,19 @@ class InputHandler:
         sep = self._infer_csv_sep(self.path)
         columns = self._get_needed_cols(sep=sep)
         dtypes = self._get_needed_dtypes(sep=sep)
+        if self.dk_data:
+            input_df = pd.read_csv(self.path,
+                                   sep=sep,
+                                   usecols=columns,
+                                   parse_dates=[columns[0]])
 
-        input_df = pd.read_csv(self.path,
-                               sep=sep,
-                               usecols=columns,
-                               dtype=dtypes,
-                               parse_dates=[columns[0]])
+            input_df = self._remove_unknown(input_df, dtypes)
+        else:
+                input_df = pd.read_csv(self.path,
+                                       sep=sep,
+                                       usecols=columns,
+                                       dtype=dtypes,
+                                       parse_dates=[columns[0]])
         # Log memory usage before sampling
         self.logger.log_memory(input_df, "input_df")
 
