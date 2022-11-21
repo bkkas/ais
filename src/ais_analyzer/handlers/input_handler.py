@@ -11,8 +11,11 @@ class InputHandler:
 
     def __init__(self, path=None):
         self.path = path
-        self.data = self._read_from_csv()
         self.dk_data = False
+        self.data = None
+
+    def read_data(self):
+        self.data = self._read_from_csv()
 
     def _infer_csv_sep(self, path: str) -> str:
         reader = pd.read_csv(path, sep=None, iterator=True, engine='python')
