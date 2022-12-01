@@ -36,7 +36,9 @@ def __main__():
 
     # 2. Loading the data using input handler
     input_path = user_arguments['input_file']
-    input_data = logger.time_info("Loading data", InputHandler(path=input_path).get_data)
+    input_handler = InputHandler(path=input_path)
+    logger.time_info("Loading data", input_handler.read_data)
+    input_data = input_handler.get_data()
     logger.log_memory(input_data)
 
     # 3. Calling the command on the data
