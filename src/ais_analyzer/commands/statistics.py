@@ -15,7 +15,7 @@ def statistics(input_df: pd.DataFrame, args) -> pd.DataFrame:
         return stat_df
     elif args['country']:
         # Outputs each country represented from mmsi, and how many rows the dataset includes from that
-        mmsi = pd.read_excel("mmsikos.xlsx")
+        mmsi = pd.read_excel("statistics_data/mmsikos1.xlsx")
 
         unique_ais = pd.DataFrame({"nr_unique_ships" : input_df["mmsi"].unique()})
         unique_ais["Digit"] = unique_ais["nr_unique_ships"].astype("str").str[:-6].astype("int")
@@ -47,13 +47,12 @@ def statistics(input_df: pd.DataFrame, args) -> pd.DataFrame:
 
         return data
     elif args['mmsi']:
-        mmsi = pd.read_excel("mmsikos.xlsx")
 
-        occurence = input_df.sort_values(by=["date_time_utc"]).loc[: ,["mmsi", "date_time_utc"]]
+        occurence = input_df.sort_values(by=["timestamp_utc"]).loc[: ,["mmsi", "timestamp_utc"]]
 
         first_oc = occurence.groupby(by=["mmsi"]).first().reset_index()
-        first_oc["last"] = occurence.groupby(by=["mmsi"]).last().reset_index().loc[:,"date_time_utc"]
-        first_oc = first_oc.rename(columns={"date_time_utc" : "first"})
+        first_oc["last"] = occurence.groupby(by=["mmsi"]).last().reset_index().loc[:,"timestamp_utc"]
+        first_oc = first_oc.rename(columns={"timestamp_utc" : "first"})
 
         df_lenght = pd.DataFrame(input_df.loc[: ,["mmsi","length"]].groupby(by=["mmsi"]).first().reset_index())
 
