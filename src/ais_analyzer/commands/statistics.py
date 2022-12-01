@@ -1,5 +1,5 @@
 import pandas as pd
-
+from .statistics_data.mmsi_country import mmsi_map
 
 def statistics(input_df: pd.DataFrame, args) -> pd.DataFrame:
     """
@@ -15,7 +15,8 @@ def statistics(input_df: pd.DataFrame, args) -> pd.DataFrame:
         return stat_df
     elif args['country']:
         # Outputs each country represented from mmsi, and how many rows the dataset includes from that
-        mmsi = pd.read_excel("statistics_data/mmsikos1.xlsx")
+        # mmsi = pd.read_excel("statistics_data/mmsikos1.xlsx")
+        mmsi = pd.DataFrame(mmsi_map.items(), columns=["Digit", "Allocated to"])
 
         unique_ais = pd.DataFrame({"nr_unique_ships" : input_df["mmsi"].unique()})
         unique_ais["Digit"] = unique_ais["nr_unique_ships"].astype("str").str[:-6].astype("int")
@@ -23,7 +24,7 @@ def statistics(input_df: pd.DataFrame, args) -> pd.DataFrame:
         ais_digits = pd.DataFrame({'Digit': input_df["mmsi"].astype("str").str[:-6].astype("int")})
         ais_counts = pd.DataFrame(data = ais_digits.value_counts(), columns = ["nr_rows"]).reset_index()
 
-        del ais
+        # del ais
 
         ships_country = pd.merge(mmsi, unique_ais, on='Digit')
 
