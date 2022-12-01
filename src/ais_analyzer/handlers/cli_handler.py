@@ -1,7 +1,7 @@
 import argparse
 
 
-class AISCLI:
+class CommandLineInterfaceHandler:
     """CLI input reader class for the AIS analyzer application
 
     <docs here>
@@ -47,7 +47,6 @@ class AISCLI:
                                 default=None,
                                 help='latitude in degrees, use decimal degrees not minutes & seconds')
 
-
         ais_parser.add_argument('--lon',
                                 action='store',
                                 default=None,
@@ -59,11 +58,29 @@ class AISCLI:
                                 type=float,
                                 help='radius from latlong point in meters')
 
+        ais_parser.add_argument('--polygon',
+                                action='store',
+                                default=None,
+                                type=str,
+                                help='list of coordinate tuple pairs [(lat, lon), (lat, lon)...] MINIMUM 3')
 
         ais_parser.add_argument('--output-file',
                                 action='store',
                                 type=str,
                                 help='output path and name of output csv')
+
+        ais_parser.add_argument('--log',
+                                action='store',
+                                default='info',
+                                choices=["debug", "info", "warning", "critical", "fatal", "error"],
+                                help='logging level when running commands. Defaults to \"info\"')
+
+        ais_parser.add_argument('--log-cli',
+                                action='store',
+                                default="false",
+                                choices=["true", "false", "cli", "file"],
+                                type=str,
+                                help='whether logging should be done to file or cmd. Defaults to file (False)')
 
         if args:
             # Args can be sent in as a list from functon call
