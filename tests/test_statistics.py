@@ -16,6 +16,6 @@ class TestCase:
         df = single_mmsi
         country_mmsi = statistics.statistics(single_mmsi, country_arg)
         assert len(df.rows) == 1
-        assert country_mmsi.country == "Denmark"
-        assert country_mmsi.nr_unique_ships == 1
-        assert country_mmsi.nr_rows == 45
+        assert country_mmsi.country[0] == "Denmark"
+        assert country_mmsi.nr_unique_ships[0] == 1
+        assert country_mmsi.nr_rows[0] == 45

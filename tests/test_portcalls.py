@@ -150,12 +150,12 @@ class TestPortcalls:
         # Testing the radius input
         portcalled_rad = portcalls.portcalls(single_portcall, valid_radius_args)
         assert portcalled_rad.shape[0] == 1
-        assert portcalled_rad.mmsi.iloc[0] == 6969
+        assert portcalled_rad.mmsi.iloc[0] == 219016713
 
         # Testing the polygon input
         portcalled_poly = portcalls.portcalls(single_portcall, valid_polygon_args)
         assert portcalled_poly.shape[0] == 1
-        assert portcalled_poly.mmsi.iloc[0] == 6969
+        assert portcalled_poly.mmsi.iloc[0] == 219016713
 
     def test_double_portcalls(self, recurring_portcall, valid_radius_args, valid_polygon_args):
         """
