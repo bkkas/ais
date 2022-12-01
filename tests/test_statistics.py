@@ -1,5 +1,6 @@
 import pandas as pd
 import pytest
+from src.ais_analyzer.commands import statistics
 
 @pytest.fixture
 def country_arg():
