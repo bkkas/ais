@@ -32,6 +32,16 @@ class AISCLI:
                                 default=False,
                                 help='enables the full statistic output')
 
+        ais_parser.add_argument('--mmsi',
+                                action='store_true',
+                                default=False,
+                                help='enables the mmsi statistic output')
+
+        ais_parser.add_argument('--country',
+                                action='store_true',
+                                default=False,
+                                help='enables the country of ships statistic output')
+
         ais_parser.add_argument('--lat',
                                 action='store',
                                 default=None,
