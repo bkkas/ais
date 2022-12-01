@@ -108,7 +108,6 @@ def vessels_in_polygon(input_df: pd.DataFrame, coordinates: list) -> pd.DataFram
     :param coordinates: a list of tuples containing (latitude, longitude) coordinates making up a polygon
     :return: the vessels in the input dataframe which are within the given polygon
     """
-
     # FIRST PART
     # First we check if vessels within square (cheap)
     # We get the "bounding box" made up of the extreme in west-east-north-south directions
@@ -144,8 +143,7 @@ def vessels_in_polygon(input_df: pd.DataFrame, coordinates: list) -> pd.DataFram
     # Then we check if vessels within polygon
 
     # We work with a series containing the coordinates instead of the whole df. The indexing is all that matters
-    latlon = pd.Series(zip(input_df.loc[:, 'lat'], input_df.loc[:, 'lon']))
-
+    latlon = pd.Series(zip(input_df.loc[:, 'lat'], input_df.loc[:, 'lon']), index=input_df.index)
     # The shapely Polygon object uses (x, y), which means we must reverse the coordinates so they are [(lon, lat)..]
     coordinates = [coord[::-1] for coord in coordinates]
     poly = Polygon(coordinates)
