@@ -61,7 +61,8 @@ class CommandLineInterfaceHandler:
         ais_parser.add_argument('--polygon',
                                 action='store',
                                 default=None,
-                                type=str,
+                                type=float,
+                                nargs="*",
                                 help='list of coordinate tuple pairs [(lat, lon), (lat, lon)...] MINIMUM 3')
 
         ais_parser.add_argument('--output-file',
@@ -88,6 +89,12 @@ class CommandLineInterfaceHandler:
         else:
             # Execute the parse_args() method to get arguments from command line
             self.args = ais_parser.parse_args()
+
+        if self.args.polygon:
+            self.args.__setattr__("polygon", self.pair_polygons(self.args.polygon))
+
+    def pair_polygons(self, coords: list):
+        return [(coords[i], coords[i+1]) for i, c in enumerate(coords) if i % 2 == 0]
 
     def get_args(self, asdict=False):
         """ Return the args either as namespace or as dict """
