@@ -221,7 +221,7 @@ def add_arrival_and_departure(df: pd.DataFrame) -> pd.DataFrame:
             continue
 
         # If a preceding row has a timedelta more than td_value, it is regarded as an "arrival" row
-        arr_bool = diff > pd.Timedelta(td_value, unit="minutes")
+        arr_bool = diff > td_value
 
         # The first row is always regarded as the arrival
         arr_bool.iloc[0] = True
