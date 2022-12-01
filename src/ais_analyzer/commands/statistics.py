@@ -49,14 +49,14 @@ def statistics(input_df: pd.DataFrame, args) -> pd.DataFrame:
     elif args['mmsi']:
         mmsi = pd.read_excel("mmsikos.xlsx")
 
-        occurence = ais.sort_values(by=["date_time_utc"]).loc[: ,["mmsi", "date_time_utc"]]
+        occurence = input_df.sort_values(by=["date_time_utc"]).loc[: ,["mmsi", "date_time_utc"]]
 
         first_oc = occurence.groupby(by=["mmsi"]).first().reset_index()
         first_oc["last"] = occurence.groupby(by=["mmsi"]).last().reset_index().loc[:,"date_time_utc"]
         first_oc = first_oc.rename(columns={"date_time_utc" : "first"})
 
-        df_lenght = pd.DataFrame(ais.loc[: ,["mmsi","length"]].groupby(by=["mmsi"]).first().reset_index())
-        
+        df_lenght = pd.DataFrame(input_df.loc[: ,["mmsi","length"]].groupby(by=["mmsi"]).first().reset_index())
+
         result = first_oc.merge(df_lenght, how="inner")
 
         return result
