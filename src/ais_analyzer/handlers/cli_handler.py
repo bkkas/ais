@@ -63,7 +63,7 @@ class CommandLineInterfaceHandler:
                                 default=None,
                                 type=float,
                                 nargs="*",
-                                help='list of coordinate tuple pairs [(lat, lon), (lat, lon)...] MINIMUM 3')
+                                help='list of coordinate tuple pairs (lat, lon), (lat, lon)... MINIMUM 3')
 
         ais_parser.add_argument('--output-file',
                                 action='store',
