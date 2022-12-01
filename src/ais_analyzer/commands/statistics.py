@@ -48,11 +48,11 @@ def statistics(input_df: pd.DataFrame, args) -> pd.DataFrame:
         return data
     elif args['mmsi']:
 
-        occurence = input_df.sort_values(by=["date_time_utc"]).loc[: ,["mmsi", "date_time_utc"]]
+        occurence = input_df.sort_values(by=["timestamp_utc"]).loc[: ,["mmsi", "timestamp_utc"]]
 
         first_oc = occurence.groupby(by=["mmsi"]).first().reset_index()
-        first_oc["last"] = occurence.groupby(by=["mmsi"]).last().reset_index().loc[:,"date_time_utc"]
-        first_oc = first_oc.rename(columns={"date_time_utc" : "first"})
+        first_oc["last"] = occurence.groupby(by=["mmsi"]).last().reset_index().loc[:,"timestamp_utc"]
+        first_oc = first_oc.rename(columns={"timestamp_utc" : "first"})
 
         df_lenght = pd.DataFrame(input_df.loc[: ,["mmsi","length"]].groupby(by=["mmsi"]).first().reset_index())
 
