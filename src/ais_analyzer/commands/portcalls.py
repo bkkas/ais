@@ -200,7 +200,7 @@ def add_arrival_and_departure(df: pd.DataFrame) -> pd.DataFrame:
     # When timedelta between two consecutive rows are larger than x time, there is a departure-arrival situation
     # We use the function diff() to get this timedelta
     # If a vessel is missing more than some timedelta of AIS data, the vessel is regarded as being departed
-    td_value = 1
+    td_value = pd.Timedelta(minutes=60)
 
     portcalls_df = pd.DataFrame()
 
@@ -216,8 +216,12 @@ def add_arrival_and_departure(df: pd.DataFrame) -> pd.DataFrame:
         # Calculating the timedelta of preceding row(s)
         diff = pd.to_datetime(vessel.timestamp_utc).diff()
 
+        # If there is just a single row, the diff is empty
+        if diff.empty:
+            continue
+
         # If a preceding row has a timedelta more than td_value, it is regarded as an "arrival" row
-        arr_bool = diff > pd.Timedelta(td_value, unit="hours")
+        arr_bool = diff > pd.Timedelta(td_value, unit="minutes")
 
         # The first row is always regarded as the arrival
         arr_bool.iloc[0] = True
@@ -284,5 +288,7 @@ def portcalls(input_df: pd.DataFrame, args: dict) -> pd.DataFrame:
 
     # Step 3: Add two columns to df: arrive and depart
     vessels_arrdep = add_arrival_and_departure(vessels_in_area)
+
+    vessels_arrdep.sort_values(by=['arrival_utc', 'mmsi'])
 
     return vessels_arrdep
