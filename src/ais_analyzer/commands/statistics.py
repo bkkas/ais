@@ -48,18 +48,47 @@ def statistics(input_df: pd.DataFrame, args) -> pd.DataFrame:
 
         return data
     elif args['mmsi']:
-
+        # outputs a Dataframe of information about each unique ship, based on mmsi
         occurence = input_df.sort_values(by=["timestamp_utc"]).loc[: ,["mmsi", "timestamp_utc"]]
 
         first_oc = occurence.groupby(by=["mmsi"]).first().reset_index()
         first_oc["last"] = occurence.groupby(by=["mmsi"]).last().reset_index().loc[:,"timestamp_utc"]
+
+        del occurence
+
+
         first_oc = first_oc.rename(columns={"timestamp_utc" : "first"})
 
         df_lenght = pd.DataFrame(input_df.loc[: ,["mmsi","length"]].groupby(by=["mmsi"]).first().reset_index())
+        count_rows = input_df["mmsi"].value_counts().reset_index()
+        count_rows.columns = ["mmsi", "count"]
+        df_lenght = df_lenght.merge(count_rows, on="mmsi")
+
+        del count_rows
 
         result = first_oc.merge(df_lenght, how="inner")
 
+        del df_lenght
+        del first_oc
+
         return result
+
+    elif args['complete']:
+        # outputs one row with information about the whole dataset
+        one_line = pd.DataFrame(input_df["mmsi"].unique()).count()
+        one_line = pd.DataFrame(one_line, columns=["count"])
+
+        one_line["avg_lenght"] = input_df.length.unique().mean()
+        one_line["max_lenght"] = input_df.length.unique().max()
+        one_line["min_lenght"] = input_df.length.unique().min()
+
+        one_line["start_date"] = input_df.timestamp_utc.sort_values().min()
+        one_line["end_date"] = input_df.timestamp_utc.sort_values().max()
+
+        one_line["median_lon"] = input_df.lon.median()
+        one_line["median_lat"] = input_df.lat.median()
+
+        return one_line
 
     else:
         stat_df = input_df.describe()
