@@ -41,6 +41,11 @@ class CommandLineInterfaceHandler:
                                 action='store_true',
                                 default=False,
                                 help='enables the country of ships statistic output')
+                        
+        ais_parser.add_argument('--complete',
+                                action='store_true',
+                                default=False,
+                                help='enables the statistics for the whole dataset in one row as output')
 
         ais_parser.add_argument('--lat',
                                 action='store',
